@@ -1,16 +1,26 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import NotFound from './pages/NotFound';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+
 function App() {
   return (
-    <div className="App">
-      <h1>Hello World !</h1>
-      <input
-        type="text"
-        max={5}
-        style={{ color: 'red' }}
-        name="hello_user"
-        className="motherfucker_user"
-      />
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
-export default App;
+function MyKlad() {
+  return (
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+}
+
+export default MyKlad;
