@@ -11,6 +11,9 @@ function Home() {
         <li>
           <Link to="/signup"> signup </Link>
         </li>
+        <li>
+          <Link to="/signup"> logout </Link>
+        </li>
       </nav>
     </div>
   );

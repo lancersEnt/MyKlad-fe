@@ -1,5 +1,6 @@
-import { Box, Grid, Stack, Typography } from '@mui/material';
-import DoneIcon from '@mui/icons-material/Done';
+import { Link } from 'react-router-dom';
+import { Grid, Typography } from '@mui/material';
+import MyKladSignIn from '../components/signin/MyKladSignIn';
 import SigninForm from '../components/signin/SignInForm';
 
 function SignIn() {
@@ -10,84 +11,35 @@ function SignIn() {
       direction="column"
       alignItems="center"
       justifyContent="center"
-      sx={{ flexGrow: 1, my: 'auto', minHeight: '100vh' }}
+      sx={{ minHeight: '100vh' }}
     >
       <Grid style={{ height: '100%' }} container spacing={2}>
-        <Grid item lg={6}>
-          <Box sx={{ ml: 'auto', mr: 'auto' }} maxWidth="450px">
-            <Stack spacing={2}>
-              <Typography variant="h4" component="h1">
-                MyKlad
-              </Typography>
-              <Typography variant="h5" component="p">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse sem ligula.
-              </Typography>
-              <Box p="2rem">
-                <Stack spacing={2}>
-                  <Typography>
-                    <DoneIcon
-                      color="primary"
-                      sx={{
-                        padding: '0.1rem',
-                        fontSize: '1rem',
-                        bgcolor: '#D7DEF5',
-                        borderRadius: '50%',
-                        marginRight: '0.5rem',
-                      }}
-                    />
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    consectetur adipiscing elit.
-                  </Typography>
-                  <Typography>
-                    <DoneIcon
-                      color="primary"
-                      sx={{
-                        padding: '0.1rem',
-                        fontSize: '1rem',
-                        bgcolor: '#D7DEF5',
-                        borderRadius: '50%',
-                        marginRight: '0.5rem',
-                      }}
-                    />
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    consectetur adipiscing elit.
-                  </Typography>
-                  <Typography>
-                    <DoneIcon
-                      color="primary"
-                      sx={{
-                        padding: '0.1rem',
-                        fontSize: '1rem',
-                        bgcolor: '#D7DEF5',
-                        borderRadius: '50%',
-                        marginRight: '0.5rem',
-                      }}
-                    />
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    consectetur adipiscing elit.
-                  </Typography>
-                  <Typography>
-                    <DoneIcon
-                      color="primary"
-                      sx={{
-                        padding: '0.1rem',
-                        fontSize: '1rem',
-                        bgcolor: '#D7DEF5',
-                        borderRadius: '50%',
-                        marginRight: '0.5rem',
-                      }}
-                    />
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    consectetur adipiscing elit.
-                  </Typography>
-                </Stack>
-              </Box>
-            </Stack>
-          </Box>
+        <Grid item md={6} sm={12} xs={12}>
+          <MyKladSignIn />
         </Grid>
-        <Grid item lg={6}>
+        <Grid item md={6} sm={12} xs={12}>
           <SigninForm />
+          <Typography
+            ml={{ md: '0px', sm: 'auto', xs: 'auto' }}
+            mr="auto"
+            maxWidth="400px"
+            fontSize="0.8rem"
+            mt="0.5rem"
+            textAlign="center"
+          >
+            Vous n&apos;avez pas de compte?{' '}
+            <Link to="/signup">
+              <Typography
+                component="span"
+                fontSize="0.8rem"
+                fontWeight={600}
+                color="primary"
+                sx={{ display: 'inline-block', textDecoration: 'underline' }}
+              >
+                Créer un compte
+              </Typography>
+            </Link>
+          </Typography>
         </Grid>
       </Grid>
     </Grid>
