@@ -3,20 +3,16 @@ import {
   Box,
   Button,
   Divider,
-  FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
-  OutlinedInput,
   Stack,
   Typography,
 } from '@mui/material';
-import {
-  Facebook,
-  Google,
-  VisibilityOutlined,
-  VisibilityOffOutlined,
-} from '@mui/icons-material';
+
+import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
+import { ReactComponent as Google } from '../../assets/social logos/google.svg';
+import { ReactComponent as Facebook } from '../../assets/social logos/facebook.svg';
+import CustomTextField from '../common/inputs/CustomTextField';
 
 function SigninForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -42,39 +38,15 @@ function SigninForm() {
         <Typography mx="auto" variant="h5" fontWeight={500}>
           Identifiez-vous
         </Typography>
-        <FormControl
-          sx={{
-            m: 1,
-            width: '100%',
-            backgroundColor: '#F4F7F9',
-            borderRadius: '.4rem',
-          }}
-          variant="outlined"
-        >
-          <InputLabel htmlFor="email">Email</InputLabel>
-          <OutlinedInput
-            sx={{ borderRadius: '.4rem' }}
-            id="email"
-            type="text"
-            label="Email"
-            autoFocus
-          />
-        </FormControl>
-        <FormControl
-          sx={{
-            m: 1,
-            width: '100%',
-            backgroundColor: '#F4F7F9',
-            borderRadius: '.4rem',
-          }}
-          variant="outlined"
-        >
-          <InputLabel htmlFor="password">Mot de passe</InputLabel>
-          <OutlinedInput
-            sx={{ borderRadius: '.4rem' }}
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            endAdornment={
+        <CustomTextField
+          InputProps={{ disableUnderline: true }}
+          variant="filled"
+          label="Email"
+        />
+        <CustomTextField
+          InputProps={{
+            disableUnderline: true,
+            endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
@@ -89,10 +61,12 @@ function SigninForm() {
                   )}
                 </IconButton>
               </InputAdornment>
-            }
-            label="Mot de passe"
-          />
-        </FormControl>
+            ),
+          }}
+          variant="filled"
+          type={showPassword ? 'text' : 'password'}
+          label="Mot de passe"
+        />
         <Button
           size="large"
           sx={{ borderRadius: '50px', textTransform: 'unset' }}
@@ -111,10 +85,12 @@ function SigninForm() {
           variant="outlined"
           color="secondary"
         >
-          <Typography color="black" fontSize=".8rem">
-            <Google sx={{ fontSize: '0.8rem', mr: '0.5rem' }} />
-            Se connecter avec Google
-          </Typography>
+          <Stack direction="row" spacing={2}>
+            <Google />
+            <Typography color="black" fontSize=".8rem" lineHeight={2}>
+              Se connecter avec Google
+            </Typography>
+          </Stack>
         </Button>
         <Button
           size="large"
@@ -122,10 +98,12 @@ function SigninForm() {
           variant="outlined"
           color="secondary"
         >
-          <Typography color="black" fontSize=".8rem">
-            <Facebook sx={{ fontSize: '0.8rem', mr: '0.5rem' }} />
-            Se connecter avec Facebook
-          </Typography>
+          <Stack direction="row" spacing={2}>
+            <Facebook />
+            <Typography color="black" fontSize=".8rem" lineHeight={2}>
+              Se connecter avec Facebook
+            </Typography>
+          </Stack>
         </Button>
       </Stack>
     </Box>

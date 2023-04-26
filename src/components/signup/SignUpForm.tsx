@@ -7,17 +7,18 @@ import {
   InputAdornment,
   InputLabel,
   MenuItem,
-  OutlinedInput,
   Select,
   SelectChangeEvent,
   Stack,
   Typography,
 } from '@mui/material';
 import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
+import CustomTextField from '../common/inputs/CustomTextField';
+import CustomSelectField from '../common/inputs/CustomSelectField';
 
 function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [sex, setSex] = useState('');
+  const [sex, setSex] = useState('male');
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -25,12 +26,13 @@ function SignUpForm() {
     event.preventDefault();
   };
 
-  const handleSexChange = (event: SelectChangeEvent) => {
+  const handleSexChange = (event: SelectChangeEvent<unknown>) => {
     setSex(event.target.value as string);
   };
   return (
     <Box
-      p="3rem"
+      py="3rem"
+      px={{ md: '3rem', sm: '2rem', xs: '1rem' }}
       boxShadow="3"
       sx={{
         ml: 'auto',
@@ -45,43 +47,28 @@ function SignUpForm() {
           Inscrivez-vous
         </Typography>
         {/* Input Nom  */}
-        <FormControl
-          sx={{ m: 1, backgroundColor: '#F4F7F9' }}
-          variant="outlined"
-          fullWidth
-        >
-          <InputLabel htmlFor="nom">Nom</InputLabel>
-          <OutlinedInput id="nom" type="text" label="Nom" autoFocus />
-        </FormControl>
+        <CustomTextField
+          InputProps={{ disableUnderline: true }}
+          variant="filled"
+          label="Nom"
+        />
         {/* input Prenom */}
-        <FormControl
-          sx={{ m: 1, backgroundColor: '#F4F7F9' }}
-          variant="outlined"
-          fullWidth
-        >
-          <InputLabel htmlFor="prenom">Prenom</InputLabel>
-          <OutlinedInput id="prenom" type="text" label="Prenom" />
-        </FormControl>
+        <CustomTextField
+          InputProps={{ disableUnderline: true }}
+          variant="filled"
+          label="Prenom"
+        />
         {/* Input Email */}
-        <FormControl
-          sx={{ m: 1, backgroundColor: '#F4F7F9' }}
-          variant="outlined"
-          fullWidth
-        >
-          <InputLabel htmlFor="email">Email</InputLabel>
-          <OutlinedInput id="email" type="text" label="Email" />
-        </FormControl>
+        <CustomTextField
+          InputProps={{ disableUnderline: true }}
+          variant="filled"
+          label="Email"
+        />
         {/* Input Password */}
-        <FormControl
-          sx={{ m: 1, backgroundColor: '#F4F7F9' }}
-          variant="outlined"
-          fullWidth
-        >
-          <InputLabel htmlFor="password">Mot de passe</InputLabel>
-          <OutlinedInput
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            endAdornment={
+        <CustomTextField
+          InputProps={{
+            disableUnderline: true,
+            endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
@@ -96,32 +83,46 @@ function SignUpForm() {
                   )}
                 </IconButton>
               </InputAdornment>
-            }
-            label="Mot de passe"
-          />
-        </FormControl>
+            ),
+          }}
+          variant="filled"
+          type={showPassword ? 'text' : 'password'}
+          label="Mot de passe"
+        />
         {/* Input DOB */}
+        <CustomTextField
+          InputProps={{ disableUnderline: true }}
+          variant="filled"
+          label="Date de naissance"
+          type="date"
+          defaultValue="2022-01-01"
+        />
+        {/* Input Sex */}
         <FormControl
-          sx={{ m: 1, backgroundColor: '#F4F7F9' }}
-          variant="outlined"
+          sx={{
+            m: 1,
+            borderRadius: 3,
+            border: 'none',
+          }}
+          variant="filled"
           fullWidth
         >
-          {/* <InputLabel htmlFor="dob">Date de naissance</InputLabel> */}
-          <OutlinedInput id="password" type="date" />
-        </FormControl>
-        {/* Input Sex */}
-        <FormControl sx={{ m: 1, backgroundColor: '#F4F7F9' }} fullWidth>
           <InputLabel id="sex">Genre</InputLabel>
-          <Select
+          <CustomSelectField
+            sx={{
+              borderRadius: 3,
+            }}
+            disableUnderline
             labelId="sex"
             id="sex-select"
-            value={sex}
             label="Genre"
+            value={sex}
             onChange={handleSexChange}
+            variant="filled"
           >
             <MenuItem value="male">Mâle</MenuItem>
             <MenuItem value="femelle">Femelle</MenuItem>
-          </Select>
+          </CustomSelectField>
         </FormControl>
         <Button
           size="large"

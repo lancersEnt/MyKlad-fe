@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Grid, Typography, CircularProgress } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 
 import MyKladSignIn from '../components/signin/MyKladSignIn';
 import SigninForm from '../components/signin/SignInForm';
@@ -14,12 +14,27 @@ function SignIn() {
       justifyContent="center"
       sx={{ minHeight: '100vh' }}
     >
-      {/* <CircularProgress variant="determinate" value={100} size="10rem" /> */}
-      <Grid style={{ height: '100%' }} container spacing={2}>
-        <Grid item md={6} sm={12} xs={12}>
+      <Grid
+        container
+        style={{ height: '100%' }}
+        spacing={{ md: 2, sm: 0, xs: 0 }}
+      >
+        <Grid
+          item
+          md={6}
+          sm={12}
+          xs={12}
+          px={{ md: '3rem', sm: '2rem', xs: '1rem' }}
+        >
           <MyKladSignIn />
         </Grid>
-        <Grid item md={6} sm={12} xs={12}>
+        <Grid
+          item
+          md={6}
+          sm={12}
+          xs={12}
+          px={{ md: '3rem', sm: '2rem', xs: '1rem' }}
+        >
           <SigninForm />
           <Typography
             ml={{ md: '0px', sm: 'auto', xs: 'auto' }}

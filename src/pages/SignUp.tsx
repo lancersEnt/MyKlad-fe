@@ -6,14 +6,21 @@ function SignUp() {
   return (
     <Grid
       container
+      my="3rem"
       spacing={0}
       direction="column"
       alignItems="center"
       justifyContent="center"
       sx={{ minHeight: '100vh' }}
     >
-      <Grid style={{ height: '100%' }} container spacing={2}>
-        <Grid item md={12} sm={12} xs={12}>
+      <Grid style={{ height: '100%' }} container>
+        <Grid
+          item
+          md={12}
+          sm={12}
+          xs={12}
+          px={{ md: '3rem', sm: '2rem', xs: '1rem' }}
+        >
           <Box
             ml="auto"
             mr="auto"
@@ -23,7 +30,12 @@ function SignUp() {
           >
             <Stack direction="row" justifyContent="center" alignItems="center">
               <img src="/MyKladIcon.png" alt="MyKlad" width="150px" />
-              <Typography variant="h4" component="h1" fontWeight={500}>
+              <Typography
+                variant="h4"
+                component="h1"
+                fontWeight={500}
+                display={{ sm: 'block', xs: 'none' }}
+              >
                 MyKlad
               </Typography>
             </Stack>
