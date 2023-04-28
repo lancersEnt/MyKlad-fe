@@ -50,16 +50,33 @@ function ProfileHeader() {
               item
               xs={12}
               md={4}
-              display={{ xs: 'flex', sm: 'flex', md: 'flex', lg: 'block' }}
+              display={{
+                xs: 'flex',
+                sm: 'flex',
+                md: 'flex',
+                lg: 'block',
+              }}
               alignItems="center"
-              justifyContent="center"
+              justifyContent={{
+                xs: 'center',
+                sm: 'center',
+                md: 'center',
+                lg: 'start',
+              }}
             >
               <Stack>
                 <Typography
                   variant="h6"
                   component="h2"
                   gutterBottom
-                  align="center"
+                  sx={{
+                    textAlign: {
+                      sx: 'center',
+                      sm: 'center',
+                      md: 'left',
+                      lg: 'left',
+                    },
+                  }}
                 >
                   Ghassen Saaf
                 </Typography>
@@ -68,7 +85,14 @@ function ProfileHeader() {
                   variant="caption"
                   component="h2"
                   gutterBottom
-                  align="center"
+                  sx={{
+                    textAlign: {
+                      sx: 'center',
+                      sm: 'center',
+                      md: 'left',
+                      lg: 'left',
+                    },
+                  }}
                 >
                   Klader debutant
                 </Typography>
@@ -83,52 +107,46 @@ function ProfileHeader() {
               justifyContent="center"
               my=".5rem"
             >
-              <Stack
-                direction="row"
-                spacing={2}
-                sx={{ justifyContent: 'space-between' }}
-              >
+              <Stack direction="row-reverse" spacing={1}>
+                <IconButton
+                  sx={{
+                    width: '45px',
+                    height: '45px',
+                    backgroundColor: '#F5F6F9',
+                    p: 1,
+                    border: '1px solid grey',
+                  }}
+                >
+                  <MoreHorizIcon />
+                </IconButton>
+                <IconButton
+                  sx={{
+                    width: '45px',
+                    height: '45px',
+                    backgroundColor: '#F5F6F9',
+                    p: 1,
+                    border: '1px solid grey',
+                  }}
+                >
+                  <ReplyIcon />
+                </IconButton>
+                <IconButton
+                  sx={{
+                    width: '45px',
+                    height: '45px',
+                    backgroundColor: '#F5F6F9',
+                    p: 1,
+                    border: '1px solid grey',
+                  }}
+                >
+                  <MailIcon />
+                </IconButton>
                 <Button
                   variant="contained"
                   sx={{ borderRadius: 25, px: '2rem' }}
                 >
                   S&apos;abonner
                 </Button>
-                <Stack direction="row-reverse" spacing={3}>
-                  <IconButton
-                    sx={{
-                      width: '45px',
-                      height: '45px',
-                      backgroundColor: '#F5F6F9',
-                      p: 1,
-                      border: '1px solid grey',
-                    }}
-                  >
-                    <MoreHorizIcon />
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      width: '45px',
-                      height: '45px',
-                      backgroundColor: '#F5F6F9',
-                      p: 1,
-                      border: '1px solid grey',
-                    }}
-                  >
-                    <ReplyIcon />
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      width: '45px',
-                      height: '45px',
-                      backgroundColor: '#F5F6F9',
-                      p: 1,
-                      border: '1px solid grey',
-                    }}
-                  >
-                    <MailIcon />
-                  </IconButton>
-                </Stack>
               </Stack>
             </Grid>
             <Grid

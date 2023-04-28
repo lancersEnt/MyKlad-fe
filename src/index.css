@@ -19,3 +19,7 @@ body {
 #stories::-webkit-scrollbar {
   display: none;  /* Safari and Chrome browsers */
 }
+
+.drawer{
+  background-color: red !important;
+}

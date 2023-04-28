@@ -31,15 +31,23 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function Sidebar() {
   return (
-    <Drawer variant="permanent" open={false}>
+    <Drawer
+      PaperProps={{
+        sx: {
+          backgroundColor: '#F4F7F9',
+        },
+      }}
+      variant="permanent"
+      open={false}
+    >
       <Box
         sx={{
           height: '100%',
           width: '100%',
           display: 'flex',
-          backgroundColor: '#F4F7F9',
           justifyContent: 'center',
           alignContent: 'center',
+          py: '5rem',
         }}
       >
         <DrawerHeader />

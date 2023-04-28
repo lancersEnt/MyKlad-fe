@@ -1,5 +1,6 @@
 import { Box, Grid } from '@mui/material';
 import ProfileHeader from '../components/profile/ProfileHeader';
+import ProfileTabs from '../components/profile/ProfileTabs';
 
 function Profile() {
   return (
@@ -12,6 +13,7 @@ function Profile() {
         <Grid item lg={2} display={{ xs: 'none', sm: 'none', lg: 'flex' }} />
         <Grid item xs={12} sm={12} lg={8}>
           <ProfileHeader />
+          <ProfileTabs />
         </Grid>
       </Grid>
     </Box>

@@ -3,10 +3,10 @@
   text-overflow: ellipsis;
   content: "";
   position:relative;
+  line-height:20px; 
 }
 .collapsed{
   height:60px;
-  line-height:20px; 
 }
 .text.collapsed:before {
   content:'';
@@ -15,5 +15,5 @@
   position:absolute;
   left:0;
   top:0;
-  background:linear-gradient(transparent 35px, #F4F7F9);
+  background:linear-gradient(transparent 15px, #F4F7F9);
 }

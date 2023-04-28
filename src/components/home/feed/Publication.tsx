@@ -6,7 +6,6 @@ import {
   CardMedia,
   Container,
   Divider,
-  Hidden,
   IconButton,
   InputAdornment,
   Stack,
