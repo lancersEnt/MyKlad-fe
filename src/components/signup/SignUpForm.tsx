@@ -7,7 +7,6 @@ import {
   InputAdornment,
   InputLabel,
   MenuItem,
-  Select,
   SelectChangeEvent,
   Stack,
   Typography,
@@ -121,7 +120,7 @@ function SignUpForm() {
             variant="filled"
           >
             <MenuItem value="male">Mâle</MenuItem>
-            <MenuItem value="femelle">Femelle</MenuItem>
+            <MenuItem value="female">Femelle</MenuItem>
           </CustomSelectField>
         </FormControl>
         <Button
