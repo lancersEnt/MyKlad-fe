@@ -9,6 +9,8 @@ import ConfidentialityIcon from '@mui/icons-material/LockOutlined';
 import BlockIcon from '@mui/icons-material/BlockOutlined';
 import LanguageIcon from '@mui/icons-material/TranslateOutlined';
 import PaymentsIcon from '@mui/icons-material/PaymentsOutlined';
+import GeneralTab from '../components/settings/GeneralTab';
+import SecurityTab from '../components/settings/SecurityTab';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -21,6 +23,7 @@ function TabPanel(props: TabPanelProps) {
 
   return (
     <div
+      style={{ flex: 1 }}
       role="tabpanel"
       hidden={value !== index}
       id={`vertical-tabpanel-${index}`}
@@ -71,131 +74,167 @@ function Settings(): ReactElement {
         }}
       >
         <Tab
+          sx={{ py: 4, display: 'block', alignItems: 'start' }}
           label={
-            <Grid container spacing={2}>
-              <Grid item>
-                <GeneralSettingsIcon />
+            <Box>
+              <GeneralSettingsIcon
+                sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}
+              />
+              <Grid
+                container
+                spacing={2}
+                display={{ xs: 'none', sm: 'none', md: 'flex' }}
+              >
+                <Grid item>
+                  <GeneralSettingsIcon />
+                </Grid>
+                <Grid item>
+                  <Typography fontSize={12} textTransform="capitalize">
+                    Général
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Typography
-                  fontSize={12}
-                  textTransform="capitalize"
-                  display={{ xs: 'none', sm: 'none', md: 'block' }}
-                >
-                  Général
-                </Typography>
-              </Grid>
-            </Grid>
+            </Box>
           }
           wrapped
           {...a11yProps(0)}
         />
         <Tab
+          sx={{ py: 4, display: 'block', alignItems: 'start' }}
           label={
-            <Grid container spacing={2}>
-              <Grid item sx={{ display: 'flex', alignContent: 'center' }}>
-                <SecurityIcon />
+            <Box>
+              <SecurityIcon
+                sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}
+              />
+              <Grid
+                container
+                spacing={2}
+                display={{ xs: 'none', sm: 'none', md: 'flex' }}
+              >
+                <Grid item>
+                  <SecurityIcon />
+                </Grid>
+                <Grid item>
+                  <Typography fontSize={12} textTransform="capitalize">
+                    Sécurité et connexion
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item display={{ xs: 'none', sm: 'none', md: 'flex' }}>
-                <Typography
-                  fontSize={12}
-                  textTransform="capitalize"
-                  display={{ xs: 'none', sm: 'none', md: 'block' }}
-                >
-                  Sécurité et connexion
-                </Typography>
-              </Grid>
-            </Grid>
+            </Box>
           }
           wrapped
           {...a11yProps(1)}
         />
         <Tab
+          sx={{ py: 4, display: 'block', alignItems: 'start' }}
           label={
-            <Grid container spacing={2}>
-              <Grid item>
-                <ConfidentialityIcon />
+            <Box>
+              <ConfidentialityIcon
+                sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}
+              />
+              <Grid
+                container
+                spacing={2}
+                display={{ xs: 'none', sm: 'none', md: 'flex' }}
+              >
+                <Grid item>
+                  <ConfidentialityIcon />
+                </Grid>
+                <Grid item>
+                  <Typography fontSize={12} textTransform="capitalize">
+                    Confidentialité
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Typography
-                  fontSize={12}
-                  textTransform="capitalize"
-                  display={{ xs: 'none', sm: 'none', md: 'block' }}
-                >
-                  Confidentialité
-                </Typography>
-              </Grid>
-            </Grid>
+            </Box>
           }
           wrapped
           {...a11yProps(2)}
         />
         <Tab
+          sx={{ py: 4, display: 'block', alignItems: 'start' }}
           label={
-            <Grid container spacing={2}>
-              <Grid item>
-                <BlockIcon />
+            <Box>
+              <BlockIcon
+                sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}
+              />
+              <Grid
+                container
+                spacing={2}
+                display={{ xs: 'none', sm: 'none', md: 'flex' }}
+              >
+                <Grid item>
+                  <BlockIcon />
+                </Grid>
+                <Grid item>
+                  <Typography fontSize={12} textTransform="capitalize">
+                    Blocage
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Typography
-                  fontSize={12}
-                  textTransform="capitalize"
-                  display={{ xs: 'none', sm: 'none', md: 'block' }}
-                >
-                  Blocage
-                </Typography>
-              </Grid>
-            </Grid>
+            </Box>
           }
           wrapped
           {...a11yProps(3)}
         />
         <Tab
+          sx={{ py: 4, display: 'block', alignItems: 'start' }}
           label={
-            <Grid container spacing={2}>
-              <Grid item>
-                <LanguageIcon />
+            <Box>
+              <LanguageIcon
+                sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}
+              />
+              <Grid
+                container
+                spacing={2}
+                display={{ xs: 'none', sm: 'none', md: 'flex' }}
+              >
+                <Grid item>
+                  <LanguageIcon />
+                </Grid>
+                <Grid item>
+                  <Typography fontSize={12} textTransform="capitalize">
+                    Langue et region
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Typography
-                  fontSize={12}
-                  textTransform="capitalize"
-                  display={{ xs: 'none', sm: 'none', md: 'block' }}
-                >
-                  Langue et region
-                </Typography>
-              </Grid>
-            </Grid>
+            </Box>
           }
           wrapped
           {...a11yProps(4)}
         />
         <Tab
+          sx={{ py: 4, display: 'block', alignItems: 'start' }}
           label={
-            <Grid container spacing={2}>
-              <Grid item>
-                <PaymentsIcon />
+            <Box>
+              <PaymentsIcon
+                sx={{ display: { xs: 'flex', sm: 'flex', md: 'none' } }}
+              />
+              <Grid
+                container
+                spacing={2}
+                display={{ xs: 'none', sm: 'none', md: 'flex' }}
+              >
+                <Grid item>
+                  <PaymentsIcon />
+                </Grid>
+                <Grid item>
+                  <Typography fontSize={12} textTransform="capitalize">
+                    MyKlad Pay
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Typography
-                  fontSize={12}
-                  textTransform="capitalize"
-                  display={{ xs: 'none', sm: 'none', md: 'block' }}
-                >
-                  MyKlad Pay
-                </Typography>
-              </Grid>
-            </Grid>
+            </Box>
           }
           wrapped
           {...a11yProps(5)}
         />
       </Tabs>
       <TabPanel value={value} index={0}>
-        Général
+        <GeneralTab />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Sécutité et connexion
+        <SecurityTab />
       </TabPanel>
       <TabPanel value={value} index={2}>
         Confidentialité
