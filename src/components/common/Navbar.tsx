@@ -170,7 +170,14 @@ export default function Navbar() {
                 </Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">Settings</Typography>
+                <Typography textAlign="center">
+                  <Link
+                    style={{ textDecoration: 'none', color: 'black' }}
+                    to="/settings"
+                  >
+                    Settings
+                  </Link>
+                </Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
                 <Typography textAlign="center">Logout</Typography>

@@ -5,6 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material';
 
 // Layouts
 import LoggedInLayout from './layouts/LoggedInLayout';
+import SettingsLayout from './layouts/SettingsLayout';
 import { useAppDispatch } from './app/hooks';
 import { setUser } from './features/authSlice';
 import PrivateRoute from './route protection/ProtectedRoutes';
@@ -16,6 +17,7 @@ const SignIn = React.lazy(() => import('./pages/SignIn'));
 const SignUp = React.lazy(() => import('./pages/SignUp'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 const Profile = React.lazy(() => import('./pages/Profile'));
+const Settings = React.lazy(() => import('./pages/Settings'));
 
 const theme = createTheme({
   palette: {
@@ -56,11 +58,13 @@ function App() {
               </React.Suspense>
             }
           />
+        </Route>
+        <Route element={<PrivateRoute component={SettingsLayout} />}>
           <Route
             path="/settings"
             element={
               <React.Suspense>
-                <Profile />
+                <Settings />
               </React.Suspense>
             }
           />
