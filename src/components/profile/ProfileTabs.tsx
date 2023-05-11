@@ -11,6 +11,7 @@ import PagesIcon from '@mui/icons-material/FileCopyOutlined';
 
 import Publications from './tabs/Publications';
 import About from './tabs/about/About';
+import Investments from './tabs/investments/Investments';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -96,7 +97,7 @@ function ProfileTabs() {
         <About />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        <Investments />
       </TabPanel>
       <TabPanel value={value} index={3}>
         Item Four

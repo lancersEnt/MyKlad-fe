@@ -54,7 +54,7 @@ function Experience({ editExp }: any) {
             <Stack direction="row" justifyContent="space-between">
               <Stack direction="row" spacing={2}>
                 <Avatar
-                  src="https://scontent.ftun10-1.fna.fbcdn.net/v/t39.30808-1/327213884_443499851238675_8735208644680745203_n.png?stp=dst-png_p200x200&_nc_cat=106&ccb=1-7&_nc_sid=c6021c&_nc_ohc=aaC2URLaGAkAX8184Ku&_nc_ht=scontent.ftun10-1.fna&oh=00_AfDil1_OJSVzGYTkye5bLnijyY_AE7F9pZT9NYOyYBSs8w&oe=644F2C35"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSXLN7hUoZHWo_4oshb2Aui9HJ5oTbHkxSSLiYbMfYkg&s"
                   alt="institute"
                   sx={{ mb: 'auto', width: '100px', height: '100px' }}
                 />

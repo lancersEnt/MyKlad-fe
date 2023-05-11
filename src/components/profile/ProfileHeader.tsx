@@ -87,7 +87,7 @@ function ProfileHeader() {
                   gutterBottom
                   sx={{
                     textAlign: {
-                      sx: 'center',
+                      xs: 'center',
                       sm: 'center',
                       md: 'left',
                       lg: 'left',

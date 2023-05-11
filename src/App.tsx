@@ -1,9 +1,14 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
 
 // Layouts
 import LoggedInLayout from './layouts/LoggedInLayout';
+import { useAppDispatch } from './app/hooks';
+import { setUser } from './features/authSlice';
+import PrivateRoute from './route protection/ProtectedRoutes';
+import UnloggedRoutes from './route protection/UnLoggedRoutes';
 
 // Lazy Loading Pages
 const Home = React.lazy(() => import('./pages/Home'));
@@ -27,10 +32,14 @@ const theme = createTheme({
 });
 
 function App() {
+  const dispatch = useAppDispatch();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  dispatch(setUser(user));
+
   return (
     <ThemeProvider theme={theme}>
       <Routes>
-        <Route element={<LoggedInLayout />}>
+        <Route element={<PrivateRoute component={LoggedInLayout} />}>
           <Route
             path="/"
             element={
@@ -47,12 +56,20 @@ function App() {
               </React.Suspense>
             }
           />
+          <Route
+            path="/settings"
+            element={
+              <React.Suspense>
+                <Profile />
+              </React.Suspense>
+            }
+          />
         </Route>
         <Route
           path="/signup"
           element={
             <React.Suspense>
-              <SignUp />
+              <UnloggedRoutes component={SignUp} />
             </React.Suspense>
           }
         />
@@ -60,7 +77,7 @@ function App() {
           path="/signin"
           element={
             <React.Suspense>
-              <SignIn />
+              <UnloggedRoutes component={SignIn} />
             </React.Suspense>
           }
         />
@@ -68,7 +85,7 @@ function App() {
           path="/forgot"
           element={
             <React.Suspense>
-              <SignIn />
+              <UnloggedRoutes component={SignIn} />
             </React.Suspense>
           }
         />
