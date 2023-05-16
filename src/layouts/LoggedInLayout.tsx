@@ -2,9 +2,9 @@
 import { Box, Container } from '@mui/material';
 // router outlet
 import { useOutlet } from 'react-router-dom';
-import BottomNav from '../components/common/BottomNav';
-import Navbar from '../components/common/Navbar';
-import Sidebar, { DrawerHeader } from '../components/common/Sidebar';
+import BottomNav from '../components/common/navigation/BottomNav';
+import Navbar from '../components/common/navigation/Navbar';
+import Sidebar, { DrawerHeader } from '../components/common/navigation/Sidebar';
 
 function LoggedInLayout() {
   const outlet = useOutlet();
