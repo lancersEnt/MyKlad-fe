@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
 
@@ -26,6 +26,15 @@ const theme = createTheme({
     },
     secondary: {
       main: '#727881',
+    },
+    success: {
+      main: '#66bb6a',
+    },
+    error: {
+      main: '#f44336',
+    },
+    warning: {
+      main: '#ffa726',
     },
   },
   typography: {

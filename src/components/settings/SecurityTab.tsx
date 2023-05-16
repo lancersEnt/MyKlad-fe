@@ -34,6 +34,7 @@ function SecurityTab(): ReactElement {
         fontSize={18}
         fontWeight={500}
         py="1rem"
+        gutterBottom
       >
         Sécurité et connexion
       </Typography>
@@ -108,9 +109,42 @@ function SecurityTab(): ReactElement {
           </Typography>
           <Typography variant="caption" color="secondary">
             Pour une sécurité optimale de votre mot de passe, nous vous
-            conseillons: <br />- 8 caractères minimum <br />- Une miniscule{' '}
-            <br />- Une majuscule <br />- Un chiffre (0- 9) <br />- Un caractère
-            spécial( ! - ? - @ - ...)
+            conseillons:
+          </Typography>
+          <Typography
+            variant="caption"
+            color="error"
+            sx={{ mt: '0 !important' }}
+          >
+            &#10005; 8 caractères minimum
+          </Typography>
+          <Typography
+            variant="caption"
+            color="#66bb6a"
+            sx={{ mt: '0 !important' }}
+          >
+            &#10003; Une miniscule
+          </Typography>
+          <Typography
+            variant="caption"
+            color="secondary"
+            sx={{ mt: '0 !important' }}
+          >
+            - Une majuscule
+          </Typography>
+          <Typography
+            variant="caption"
+            color="secondary"
+            sx={{ mt: '0 !important' }}
+          >
+            - Un chiffre [0- 9]
+          </Typography>
+          <Typography
+            variant="caption"
+            color="secondary"
+            sx={{ mt: '0 !important' }}
+          >
+            - Un caractère spécial ( !, ?, @, ...)
           </Typography>
           <CustomTextField
             fullWidth

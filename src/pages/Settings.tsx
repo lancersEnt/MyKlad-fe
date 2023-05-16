@@ -59,7 +59,6 @@ function Settings(): ReactElement {
         flexGrow: 1,
         // bgcolor: 'background.paper',
         display: 'flex',
-        height: '100vh',
       }}
     >
       <Tabs
@@ -74,7 +73,11 @@ function Settings(): ReactElement {
         }}
       >
         <Tab
-          sx={{ py: 4, display: 'block', alignItems: 'start' }}
+          sx={{
+            py: 4,
+            display: 'block',
+            alignItems: { xs: 'center', sm: 'center', md: 'start' },
+          }}
           label={
             <Box>
               <GeneralSettingsIcon
@@ -100,7 +103,11 @@ function Settings(): ReactElement {
           {...a11yProps(0)}
         />
         <Tab
-          sx={{ py: 4, display: 'block', alignItems: 'start' }}
+          sx={{
+            py: 4,
+            display: 'block',
+            alignItems: { xs: 'center', sm: 'center', md: 'start' },
+          }}
           label={
             <Box>
               <SecurityIcon
@@ -126,7 +133,11 @@ function Settings(): ReactElement {
           {...a11yProps(1)}
         />
         <Tab
-          sx={{ py: 4, display: 'block', alignItems: 'start' }}
+          sx={{
+            py: 4,
+            display: 'block',
+            alignItems: { xs: 'center', sm: 'center', md: 'start' },
+          }}
           label={
             <Box>
               <ConfidentialityIcon
@@ -152,7 +163,11 @@ function Settings(): ReactElement {
           {...a11yProps(2)}
         />
         <Tab
-          sx={{ py: 4, display: 'block', alignItems: 'start' }}
+          sx={{
+            py: 4,
+            display: 'block',
+            alignItems: { xs: 'center', sm: 'center', md: 'start' },
+          }}
           label={
             <Box>
               <BlockIcon
@@ -178,7 +193,11 @@ function Settings(): ReactElement {
           {...a11yProps(3)}
         />
         <Tab
-          sx={{ py: 4, display: 'block', alignItems: 'start' }}
+          sx={{
+            py: 4,
+            display: 'block',
+            alignItems: { xs: 'center', sm: 'center', md: 'start' },
+          }}
           label={
             <Box>
               <LanguageIcon
@@ -204,7 +223,11 @@ function Settings(): ReactElement {
           {...a11yProps(4)}
         />
         <Tab
-          sx={{ py: 4, display: 'block', alignItems: 'start' }}
+          sx={{
+            py: 4,
+            display: 'block',
+            alignItems: { xs: 'center', sm: 'center', md: 'start' },
+          }}
           label={
             <Box>
               <PaymentsIcon

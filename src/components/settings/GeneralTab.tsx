@@ -11,8 +11,18 @@ function GeneralTab(): ReactElement {
         fontSize={18}
         fontWeight={500}
         py="1rem"
+        gutterBottom
       >
         Paramètres généraux
+      </Typography>
+      <Typography
+        component="h2"
+        variant="h5"
+        fontSize={14}
+        fontWeight={500}
+        py="1rem"
+      >
+        Informations personnelles
       </Typography>
       <Box>
         <Stack spacing={2}>
