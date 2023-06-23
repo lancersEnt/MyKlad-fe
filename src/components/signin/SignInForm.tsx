@@ -1,8 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState, MouseEvent, useEffect, ReactElement } from 'react';
+import { useState, MouseEvent, ReactElement } from 'react';
 import { useForm, Resolver } from 'react-hook-form';
-
+import axios from 'axios';
+import { print } from 'graphql';
+import gql from 'graphql-tag';
 import {
   Box,
   Button,
@@ -18,17 +21,30 @@ import { useNavigate } from 'react-router-dom';
 import { ReactComponent as Google } from '../../assets/social logos/google.svg';
 import { ReactComponent as Facebook } from '../../assets/social logos/facebook.svg';
 
-import { useLoginUserMutation } from '../../app/api/apiSlice';
-import { useAppDispatch } from '../../app/hooks';
-import { setUser } from '../../features/authSlice';
-
 import CustomTextField from '../common/inputs/CustomTextField';
 
 type FormValues = {
   email: string;
   password: string;
 };
-
+const signinMutation = `
+mutation Login($data: LoginUserInput!) {
+  login(data: $data) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      email
+      firstname
+      lastname
+      permissions
+      username
+    }
+  }
+}
+`;
 const resolver: Resolver<FormValues> = async (values) => {
   return {
     values: values.email ? values : {},
@@ -48,9 +64,6 @@ const resolver: Resolver<FormValues> = async (values) => {
 };
 
 function SigninForm(): ReactElement {
-  const [loginUser, { data: loginData, isSuccess, isError, error }] =
-    useLoginUserMutation();
-  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -58,7 +71,39 @@ function SigninForm(): ReactElement {
   } = useForm<FormValues>({ resolver });
 
   const onSubmit = handleSubmit(async (data) => {
-    await loginUser(data);
+    const graphqlMutation = gql`
+      query Query($user: LoginUserInput!) {
+        login(user: $user) {
+          user {
+            id
+            firstname
+            lastname
+            email
+            password
+            username
+            permissions
+            passwordReset
+            createdAt
+            updatedAt
+          }
+          token
+        }
+      }
+    `;
+    // signin mutation
+    const headers = {
+      'content-type': 'application/json',
+    };
+    axios.post(
+      'http://localhost:3000/graphql',
+      {
+        query: print(graphqlMutation),
+        variables: {
+          user: data,
+        },
+      },
+      { withCredentials: true }
+    );
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -67,24 +112,64 @@ function SigninForm(): ReactElement {
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
+  const refreshToken = () => {
+    const graphqlMutation = gql`
+      query Query {
+        refreshToken
+      }
+    `;
+    const headers = {
+      'content-type': 'application/json',
+    };
+    axios.post(
+      'http://localhost:3000/graphql',
+      {
+        query: print(graphqlMutation),
+      },
+      { withCredentials: true }
+    );
+  };
 
+  const addPost = () => {
+    const graphqlMutation = gql`
+      mutation Mutation($createCommentInput: CreateCommentInput!) {
+        createComment(createCommentInput: $createCommentInput) {
+          id
+          content
+          authorId
+          postId
+          user {
+            id
+            username
+          }
+          post {
+            id
+            content
+          }
+          createdAt
+          updatedAt
+        }
+      }
+    `;
+    const headers = {
+      'content-type': 'application/json',
+    };
+    axios.post(
+      'http://localhost:3000/graphql',
+      {
+        query: print(graphqlMutation),
+        variables: {
+          createCommentInput: {
+            authorId: 'e75ec2a8-30bc-4246-a194-8cbc91e657b4',
+            postId: '1496955d-0364-4a97-9db9-10e8b1d299f5',
+            content: 'haw he4a commentaire mel telifoun',
+          },
+        },
+      },
+      { withCredentials: true }
+    );
+  };
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isSuccess) {
-      console.log('user loggedd in successfully');
-      dispatch(
-        setUser({
-          email: loginData.email,
-          access_token: loginData.access_token,
-        })
-      );
-      navigate('/');
-    }
-    if (isError) {
-      console.log(error);
-    }
-  }, [isSuccess, navigate]);
 
   return (
     <Box
@@ -166,6 +251,7 @@ function SigninForm(): ReactElement {
             }}
             variant="outlined"
             color="secondary"
+            onClick={() => refreshToken()}
           >
             <Stack direction="row" spacing={2}>
               <Google />
@@ -179,6 +265,7 @@ function SigninForm(): ReactElement {
             style={{ borderRadius: '50px', textTransform: 'unset' }}
             variant="outlined"
             color="secondary"
+            onClick={() => addPost()}
           >
             <Stack direction="row" spacing={2}>
               <Facebook />
