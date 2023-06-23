@@ -8,9 +8,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   IconButton,
+  InputAdornment,
   Stack,
-  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -20,6 +21,12 @@ import {
 import PhotoIcon from '@mui/icons-material/Photo';
 import LinkIcon from '@mui/icons-material/Link';
 import NoteIcon from '@mui/icons-material/Note';
+import EmojiIcon from '@mui/icons-material/EmojiEmotionsOutlined';
+import PublicIcon from '@mui/icons-material/Public';
+import ShowMoreIcon from '@mui/icons-material/ExpandMore';
+import ShowLessIcon from '@mui/icons-material/ExpandLess';
+// custom components
+import CustomTextField from './CustomTextField';
 
 function PostInput(): ReactElement {
   const theme = useTheme();
@@ -35,6 +42,7 @@ function PostInput(): ReactElement {
     setPostType('');
     setOpen(false);
   };
+
   return (
     <Box
       sx={{
@@ -93,20 +101,49 @@ function PostInput(): ReactElement {
           },
         }}
       >
-        <DialogTitle>Créer un post</DialogTitle>
+        <DialogTitle textAlign="center">Créer un post</DialogTitle>
+        <Divider />
         <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Email Address"
-            type="email"
+          <Stack direction="row" spacing={2} mb={2}>
+            <Avatar
+              src=""
+              alt="profile-avatar"
+              sx={{ width: '4rem', height: '4rem' }}
+            />
+            <Stack spacing={2}>
+              <Typography component="h3" fontSize={16} fontWeight={500}>
+                Ghassen Saaf
+              </Typography>
+              <Button
+                sx={{ borderRadius: 25 }}
+                variant="contained"
+                size="small"
+                color="secondary"
+              >
+                <PublicIcon />
+                <Typography fontSize={12} textTransform="none">
+                  Tout le monde
+                </Typography>
+                <ShowMoreIcon />
+              </Button>
+            </Stack>
+          </Stack>
+          <CustomTextField
+            placeholder="Ecrivez un commentaire ... "
+            multiline
             fullWidth
-            variant="standard"
+            variant="filled"
+            InputProps={{
+              hiddenLabel: true,
+              disableUnderline: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton edge="end">
+                    <EmojiIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </DialogContent>
         <DialogActions sx={{ py: 2 }}>

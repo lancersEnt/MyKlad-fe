@@ -56,7 +56,7 @@ function Publication() {
             </IconButton>
             <Stack justifyContent="center" pr={2}>
               <Typography fontWeight={700}>
-                Nom de cabinet d&apos;expertise azfeazefa
+                Nom de cabinet d&apos;expertise 
               </Typography>
               <Typography fontSize={14} color="grey">
                 0113Z - Culture de légume, de melons, de racines et de

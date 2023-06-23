@@ -6,8 +6,6 @@ import { createTheme, ThemeProvider } from '@mui/material';
 // Layouts
 import LoggedInLayout from './layouts/LoggedInLayout';
 import SettingsLayout from './layouts/SettingsLayout';
-import { useAppDispatch } from './app/hooks';
-import { setUser } from './features/authSlice';
 import PrivateRoute from './route protection/ProtectedRoutes';
 import UnloggedRoutes from './route protection/UnLoggedRoutes';
 
@@ -43,10 +41,6 @@ const theme = createTheme({
 });
 
 function App() {
-  const dispatch = useAppDispatch();
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  dispatch(setUser(user));
-
   return (
     <ThemeProvider theme={theme}>
       <Routes>
