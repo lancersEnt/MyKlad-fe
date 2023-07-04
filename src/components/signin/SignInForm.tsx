@@ -1,14 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState, MouseEvent, ReactElement } from 'react';
+import React, { useState, MouseEvent, ReactElement } from 'react';
 import { useForm, Resolver } from 'react-hook-form';
-import axios from 'axios';
-import { print } from 'graphql';
-import gql from 'graphql-tag';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   IconButton,
   InputAdornment,
@@ -18,6 +20,9 @@ import {
 
 import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+
+import { gql, useMutation } from '@apollo/client';
+
 import { ReactComponent as Google } from '../../assets/social logos/google.svg';
 import { ReactComponent as Facebook } from '../../assets/social logos/facebook.svg';
 
@@ -27,83 +32,55 @@ type FormValues = {
   email: string;
   password: string;
 };
-const signinMutation = `
-mutation Login($data: LoginUserInput!) {
-  login(data: $data) {
-    errors {
-      field
-      message
-    }
-    user {
-      id
-      email
-      firstname
-      lastname
-      permissions
-      username
+
+const SIGN_IN = gql`
+  mutation Login($user: LoginUserInput!) {
+    login(user: $user) {
+      token
+      user {
+        id
+        firstname
+        lastname
+        username
+        email
+        followers {
+          id
+          firstname
+          lastname
+        }
+      }
     }
   }
-}
 `;
-const resolver: Resolver<FormValues> = async (values) => {
-  return {
-    values: values.email ? values : {},
-    errors: !values.email
-      ? {
-          email: {
-            type: 'required',
-            message: 'This is required.',
-          },
-          password: {
-            type: 'required',
-            message: 'This is required.',
-          },
-        }
-      : {},
-  };
-};
 
 function SigninForm(): ReactElement {
+  const formSchema = Yup.object().shape({
+    email: Yup.string()
+      .required('email is required')
+      .matches(
+        /^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$/i,
+        'enter a valid email please'
+      ),
+    password: Yup.string().required('Password is required'),
+  });
+  const formOptions = { resolver: yupResolver(formSchema) };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({ resolver });
+  } = useForm<FormValues>(formOptions);
 
-  const onSubmit = handleSubmit(async (data) => {
-    const graphqlMutation = gql`
-      query Query($user: LoginUserInput!) {
-        login(user: $user) {
-          user {
-            id
-            firstname
-            lastname
-            email
-            password
-            username
-            permissions
-            passwordReset
-            createdAt
-            updatedAt
-          }
-          token
-        }
-      }
-    `;
-    // signin mutation
-    const headers = {
-      'content-type': 'application/json',
-    };
-    axios.post(
-      'http://localhost:3000/graphql',
-      {
-        query: print(graphqlMutation),
-        variables: {
-          user: data,
-        },
-      },
-      { withCredentials: true }
-    );
+  const navigate = useNavigate();
+
+  const [signin, { loading, error, data }] = useMutation(SIGN_IN, {
+    onCompleted(res) {
+      if (res.login) navigate('/');
+    },
+  });
+
+  const onSubmit = handleSubmit(async (formValues) => {
+    await signin({ variables: { user: formValues } });
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -112,64 +89,6 @@ function SigninForm(): ReactElement {
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
-  const refreshToken = () => {
-    const graphqlMutation = gql`
-      query Query {
-        refreshToken
-      }
-    `;
-    const headers = {
-      'content-type': 'application/json',
-    };
-    axios.post(
-      'http://localhost:3000/graphql',
-      {
-        query: print(graphqlMutation),
-      },
-      { withCredentials: true }
-    );
-  };
-
-  const addPost = () => {
-    const graphqlMutation = gql`
-      mutation Mutation($createCommentInput: CreateCommentInput!) {
-        createComment(createCommentInput: $createCommentInput) {
-          id
-          content
-          authorId
-          postId
-          user {
-            id
-            username
-          }
-          post {
-            id
-            content
-          }
-          createdAt
-          updatedAt
-        }
-      }
-    `;
-    const headers = {
-      'content-type': 'application/json',
-    };
-    axios.post(
-      'http://localhost:3000/graphql',
-      {
-        query: print(graphqlMutation),
-        variables: {
-          createCommentInput: {
-            authorId: 'e75ec2a8-30bc-4246-a194-8cbc91e657b4',
-            postId: '1496955d-0364-4a97-9db9-10e8b1d299f5',
-            content: 'haw he4a commentaire mel telifoun',
-          },
-        },
-      },
-      { withCredentials: true }
-    );
-  };
-  const navigate = useNavigate();
 
   return (
     <Box
@@ -193,8 +112,21 @@ function SigninForm(): ReactElement {
             InputProps={{ disableUnderline: true }}
             variant="filled"
             label="Email"
+            sx={{
+              border: errors.email?.message ? '1px solid #d32f2f' : 'none',
+            }}
             {...register('email')}
           />
+          <Typography
+            display={errors.email?.message ? 'block' : 'none'}
+            sx={{
+              color: '#d32f2f',
+              marginTop: '0 !important',
+            }}
+            variant="caption"
+          >
+            {errors.email?.message}
+          </Typography>
           <CustomTextField
             InputProps={{
               disableUnderline: true,
@@ -215,11 +147,24 @@ function SigninForm(): ReactElement {
                 </InputAdornment>
               ),
             }}
+            sx={{
+              border: errors.password?.message ? '1px solid #d32f2f' : 'none',
+            }}
             variant="filled"
             type={showPassword ? 'text' : 'password'}
             label="Mot de passe"
             {...register('password')}
           />
+          <Typography
+            display={errors.password?.message ? 'block' : 'none'}
+            sx={{
+              color: '#d32f2f',
+              marginTop: '0 !important',
+            }}
+            variant="caption"
+          >
+            {errors.password?.message}
+          </Typography>
           <Typography
             color="primary"
             fontSize="12px"
@@ -237,9 +182,14 @@ function SigninForm(): ReactElement {
             type="submit"
           >
             <Typography py=".5rem" fontSize=".8rem">
-              Connexion
+              {loading ? (
+                <CircularProgress color="inherit" size="1.125rem" />
+              ) : (
+                'Connexion'
+              )}
             </Typography>
           </Button>
+          <Typography> {error?.message} </Typography>
           <Divider sx={{ fontSize: '1rem', fontWeight: '500', color: 'grey' }}>
             {'   '}OU
           </Divider>
@@ -251,7 +201,6 @@ function SigninForm(): ReactElement {
             }}
             variant="outlined"
             color="secondary"
-            onClick={() => refreshToken()}
           >
             <Stack direction="row" spacing={2}>
               <Google />
@@ -265,7 +214,6 @@ function SigninForm(): ReactElement {
             style={{ borderRadius: '50px', textTransform: 'unset' }}
             variant="outlined"
             color="secondary"
-            onClick={() => addPost()}
           >
             <Stack direction="row" spacing={2}>
               <Facebook />

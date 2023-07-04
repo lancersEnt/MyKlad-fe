@@ -20,6 +20,10 @@ import ShareIcon from '@mui/icons-material/ShareOutlined';
 import SaveIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import EmojiIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 import CustomTextField from '../../common/inputs/CustomTextField';
+import { dateToNormalFormat } from '../../../utils/dateUtils';
+
+// Interfaces
+import Post from '../../../utils/Interfaces/Post.Interface';
 
 const CustomCard = styled(Card)(({ theme }) => ({
   border: 'none',
@@ -33,14 +37,14 @@ const CustomCard = styled(Card)(({ theme }) => ({
   },
 })) as typeof Card;
 
-function Publication() {
+interface PublicationProps {
+  post: Post;
+}
+function Publication({ post }: PublicationProps) {
   return (
     <CustomCard sx={{ mb: 5, position: 'relative' }}>
       <Box sx={{ color: 'grey', position: 'absolute', right: 0, top: 10 }}>
         <Stack direction="row" spacing={0}>
-          <Typography fontSize="14px" lineHeight="2.25rem">
-            24 AVR
-          </Typography>
           <MoreVertIcon fontSize="large" />
         </Stack>
       </Box>
@@ -55,12 +59,11 @@ function Publication() {
               />
             </IconButton>
             <Stack justifyContent="center" pr={2}>
-              <Typography fontWeight={700}>
-                Nom de cabinet d&apos;expertise 
+              <Typography fontWeight={700} sx={{ textTransform: 'capitalize' }}>
+                {`${post.user.firstname} ${post.user.lastname}`}
               </Typography>
               <Typography fontSize={14} color="grey">
-                0113Z - Culture de légume, de melons, de racines et de
-                tubercules
+                {`${dateToNormalFormat(post.createdAt)}`}
               </Typography>
             </Stack>
           </Stack>
