@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 
 import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { gql, useMutation } from '@apollo/client';
 
@@ -173,7 +173,10 @@ function SigninForm(): ReactElement {
             sx={{ marginTop: '.25rem !important' }}
           >
             {' '}
-            Mot de passe oublié ?
+            <Link to="/forgot" style={{ textDecoration: 'none' }}>
+              {' '}
+              Mot de passe oublié ?
+            </Link>
           </Typography>
           <Button
             size="large"

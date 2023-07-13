@@ -12,7 +12,9 @@ import UnloggedRoutes from './route protection/UnLoggedRoutes';
 // Lazy Loading Pages
 const Home = React.lazy(() => import('./pages/Home'));
 const SignIn = React.lazy(() => import('./pages/SignIn'));
+const Forgot = React.lazy(() => import('./pages/Forgot'));
 const SignUp = React.lazy(() => import('./pages/SignUp'));
+const AccountActivation = React.lazy(() => import('./pages/AccountActivation'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 const Profile = React.lazy(() => import('./pages/Profile'));
 const Settings = React.lazy(() => import('./pages/Settings'));
@@ -72,6 +74,7 @@ function App() {
             }
           />
         </Route>
+
         <Route
           path="/signup"
           element={
@@ -89,10 +92,18 @@ function App() {
           }
         />
         <Route
+          path="/account-activation/:token"
+          element={
+            <React.Suspense>
+              <UnloggedRoutes component={AccountActivation} />
+            </React.Suspense>
+          }
+        />
+        <Route
           path="/forgot"
           element={
             <React.Suspense>
-              <UnloggedRoutes component={SignIn} />
+              <UnloggedRoutes component={Forgot} />
             </React.Suspense>
           }
         />

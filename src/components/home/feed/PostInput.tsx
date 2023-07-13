@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { gql, useMutation } from '@apollo/client';
 import {
   Avatar,
   Box,
@@ -6,7 +7,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Divider,
   IconButton,
@@ -24,13 +24,29 @@ import NoteIcon from '@mui/icons-material/Note';
 import EmojiIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 import PublicIcon from '@mui/icons-material/Public';
 import ShowMoreIcon from '@mui/icons-material/ExpandMore';
-import ShowLessIcon from '@mui/icons-material/ExpandLess';
 // custom components
 import CustomTextField from '../../common/inputs/CustomTextField';
+
+const CREATE_POST = gql`
+  mutation ($createPostInput: CreatePostInput!) {
+    createPost(createPostInput: $createPostInput) {
+      id
+      content
+      authorId
+      createdAt
+      updatedAt
+      user {
+        id
+        firstname
+      }
+    }
+  }
+`;
 
 function PostInput(): ReactElement {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [content, setContent] = React.useState('');
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [postType, setPostType] = React.useState<string>('');
 
@@ -42,6 +58,23 @@ function PostInput(): ReactElement {
   const handleClose = () => {
     setPostType('');
     setOpen(false);
+  };
+
+  const [createPost, { loading, error, data }] = useMutation(CREATE_POST, {
+    onCompleted() {
+      setOpen(false);
+    },
+  });
+
+  const handleCreatePost = async () => {
+    await createPost({
+      variables: {
+        createPostInput: {
+          content: 'Bonjour la vie',
+          authorId: '',
+        },
+      },
+    });
   };
 
   return (
@@ -134,6 +167,8 @@ function PostInput(): ReactElement {
             multiline
             fullWidth
             variant="filled"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             InputProps={{
               hiddenLabel: true,
               disableUnderline: true,
@@ -151,7 +186,7 @@ function PostInput(): ReactElement {
           <Button
             sx={{ borderRadius: 25 }}
             variant="contained"
-            onClick={handleClose}
+            onClick={handleCreatePost}
           >
             Publier
           </Button>

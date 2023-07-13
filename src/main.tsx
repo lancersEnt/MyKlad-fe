@@ -20,9 +20,7 @@ const client = new ApolloClient({
 });
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <ApolloProvider client={client}>
-      <MyKlad />
-    </ApolloProvider>
-  </React.StrictMode>
+  <ApolloProvider client={client}>
+    <MyKlad />
+  </ApolloProvider>
 );
