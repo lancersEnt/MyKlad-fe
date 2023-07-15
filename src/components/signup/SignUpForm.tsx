@@ -11,14 +11,13 @@ import {
   InputAdornment,
   InputLabel,
   MenuItem,
-  SelectChangeEvent,
   Stack,
   Typography,
 } from '@mui/material';
 import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
-import { gql, useMutation } from '@apollo/client';
 import CustomTextField from '../common/inputs/CustomTextField';
 import CustomSelectField from '../common/inputs/CustomSelectField';
+import { UseSignup } from '../../hooks/auth/UseSignup';
 
 type FormValues = {
   firstname: string;
@@ -29,15 +28,6 @@ type FormValues = {
   dateOfBirth: Date;
   sex: string;
 };
-
-const SIGNUP = gql`
-  mutation signup($createUserInput: CreateUserInput!) {
-    signup(createUserInput: $createUserInput) {
-      id
-      email
-    }
-  }
-`;
 
 function SignUpForm(): ReactElement {
   const formSchema = Yup.object().shape({
@@ -65,12 +55,7 @@ function SignUpForm(): ReactElement {
     formState: { errors },
   } = useForm<FormValues>(formOptions);
 
-  const [signup, { loading, error, data }] = useMutation(SIGNUP, {
-    onCompleted() {
-      setSignedUp(true);
-      reset();
-    },
-  });
+  const { signup } = UseSignup(setSignedUp, reset);
 
   const onSubmit = handleSubmit(async (formValues) => {
     await signup({

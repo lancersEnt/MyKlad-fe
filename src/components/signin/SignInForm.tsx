@@ -3,10 +3,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState, MouseEvent, ReactElement } from 'react';
-import { useForm, Resolver } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-
 import {
   Box,
   Button,
@@ -19,39 +18,18 @@ import {
 } from '@mui/material';
 
 import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
-
-import { gql, useMutation } from '@apollo/client';
+import { Link } from 'react-router-dom';
 
 import { ReactComponent as Google } from '../../assets/social logos/google.svg';
 import { ReactComponent as Facebook } from '../../assets/social logos/facebook.svg';
 
 import CustomTextField from '../common/inputs/CustomTextField';
+import { UseSignin } from '../../hooks/auth/UseSignin';
 
 type FormValues = {
   email: string;
   password: string;
 };
-
-const SIGN_IN = gql`
-  mutation Login($user: LoginUserInput!) {
-    login(user: $user) {
-      token
-      user {
-        id
-        firstname
-        lastname
-        username
-        email
-        followers {
-          id
-          firstname
-          lastname
-        }
-      }
-    }
-  }
-`;
 
 function SigninForm(): ReactElement {
   const formSchema = Yup.object().shape({
@@ -71,13 +49,7 @@ function SigninForm(): ReactElement {
     formState: { errors },
   } = useForm<FormValues>(formOptions);
 
-  const navigate = useNavigate();
-
-  const [signin, { loading, error, data }] = useMutation(SIGN_IN, {
-    onCompleted(res) {
-      if (res.login) navigate('/');
-    },
-  });
+  const { signin, loading, error, data } = UseSignin();
 
   const onSubmit = handleSubmit(async (formValues) => {
     await signin({ variables: { user: formValues } });

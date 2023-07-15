@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
+import { useSelector } from 'react-redux';
 
 // Material Components
 
@@ -27,6 +28,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Link } from 'react-router-dom';
 
+import { RootState } from '../../../app/store';
+import { UseSignout } from '../../../hooks/auth/UseSignout';
+
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -42,6 +46,8 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 export default function Navbar() {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const { signout } = UseSignout();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -95,7 +101,7 @@ export default function Navbar() {
               </Box>
               <Stack display={{ xs: 'none', sm: 'none', md: 'block' }}>
                 <Typography color="black" fontSize=".8rem" fontWeight="500">
-                  Saaf Ghassen
+                  {`${user.firstname} ${user.lastname}`}
                   {/* <ExpandMoreIcon /> */}
                 </Typography>
                 <Chip
@@ -179,7 +185,7 @@ export default function Navbar() {
                   </Link>
                 </Typography>
               </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
+              <MenuItem onClick={() => signout()}>
                 <Typography textAlign="center">Logout</Typography>
               </MenuItem>
             </Menu>

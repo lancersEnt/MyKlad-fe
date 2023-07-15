@@ -11,7 +11,7 @@ export default function Events() {
   return (
     <Box>
       <Typography variant="h6" component="h2" gutterBottom>
-        Evenements
+        Klads recommandé
       </Typography>
       <Card sx={{ display: 'flex', mb: 3, borderRadius: 3 }}>
         <CardMedia

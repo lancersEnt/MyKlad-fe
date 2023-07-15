@@ -1,7 +1,7 @@
 import { Box, Grid } from '@mui/material';
 import Stories from '../components/home/Stories/Stories';
 import Feed from '../components/home/feed/Feed';
-import Events from '../components/home/events/Events';
+import Events from '../components/home/events/SuggestedKlads';
 
 function Home() {
   return (

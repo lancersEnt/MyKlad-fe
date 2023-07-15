@@ -1,13 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
 
 // Layouts
+import { useDispatch } from 'react-redux';
+import { gql, useQuery } from '@apollo/client';
 import LoggedInLayout from './layouts/LoggedInLayout';
 import SettingsLayout from './layouts/SettingsLayout';
 import PrivateRoute from './route protection/ProtectedRoutes';
 import UnloggedRoutes from './route protection/UnLoggedRoutes';
+import { login, logout } from './features/auth/authSlice';
 
 // Lazy Loading Pages
 const Home = React.lazy(() => import('./pages/Home'));
@@ -42,7 +45,32 @@ const theme = createTheme({
   },
 });
 
+const ME = gql`
+  query Me {
+    me {
+      id
+      firstname
+      lastname
+      email
+      username
+    }
+  }
+`;
+
 function App() {
+  const dispatch = useDispatch();
+  const { data, loading } = useQuery(ME);
+
+  // Use the `useEffect` hook to dispatch the `login` action when data is available and not loading
+  useEffect(() => {
+    if (!loading && data && data.me) {
+      dispatch(login(data.me));
+    }
+    if (!loading && !data?.me) {
+      dispatch(logout());
+    }
+  }, [data, loading]);
+
   return (
     <ThemeProvider theme={theme}>
       <Routes>

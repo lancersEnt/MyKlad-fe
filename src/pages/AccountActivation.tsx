@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Link, useParams } from 'react-router-dom';
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material';
 import { gql, useMutation } from '@apollo/client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const ACC_ACTIVATION = gql`
   mutation activateAccount($activationToken: String!) {
@@ -14,11 +14,24 @@ const ACC_ACTIVATION = gql`
 `;
 
 function AccountActivation() {
+  const navigate = useNavigate();
+
   const { token } = useParams();
+  const [progress, setProgress] = useState(20);
+
   const [activateAccount, { loading, error, data }] =
     useMutation(ACC_ACTIVATION);
+
   useEffect(() => {
     activateAccount({ variables: { activationToken: token } });
+    setInterval(() => {
+      setProgress((prevProgress) =>
+        prevProgress >= 100 ? 0 : prevProgress + 20
+      );
+    }, 1000);
+    setInterval(() => {
+      navigate('/signin');
+    }, 5000);
   }, []);
   return (
     <Grid
@@ -75,8 +88,10 @@ function AccountActivation() {
               variant="h5"
               fontWeight={300}
             >
-              Compte Activée : {token}
+              Compte Activée, vous serez redirigé vers la page de connexion dans
+              5 secondes
             </Typography>
+            <CircularProgress variant="determinate" value={progress} />
           </Box>
           <Typography
             ml="auto"
