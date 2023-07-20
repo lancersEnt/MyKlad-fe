@@ -5,12 +5,12 @@ import { createTheme, ThemeProvider } from '@mui/material';
 
 // Layouts
 import { useDispatch } from 'react-redux';
-import { gql, useQuery } from '@apollo/client';
 import LoggedInLayout from './layouts/LoggedInLayout';
 import SettingsLayout from './layouts/SettingsLayout';
 import PrivateRoute from './route protection/ProtectedRoutes';
 import UnloggedRoutes from './route protection/UnLoggedRoutes';
 import { login, logout } from './features/auth/authSlice';
+import { UseIsAuth } from './hooks/auth/UseIsAuth';
 
 // Lazy Loading Pages
 const Home = React.lazy(() => import('./pages/Home'));
@@ -45,21 +45,9 @@ const theme = createTheme({
   },
 });
 
-const ME = gql`
-  query Me {
-    me {
-      id
-      firstname
-      lastname
-      email
-      username
-    }
-  }
-`;
-
 function App() {
   const dispatch = useDispatch();
-  const { data, loading } = useQuery(ME);
+  const { data, loading } = UseIsAuth();
 
   // Use the `useEffect` hook to dispatch the `login` action when data is available and not loading
   useEffect(() => {
@@ -84,7 +72,7 @@ function App() {
             }
           />
           <Route
-            path="/klader/:id"
+            path="/klader/:username"
             element={
               <React.Suspense>
                 <Profile />

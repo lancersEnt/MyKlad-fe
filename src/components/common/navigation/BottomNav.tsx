@@ -12,8 +12,10 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import GroupsIcon from '@mui/icons-material/Groups';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { useNavigate } from 'react-router-dom';
 
 export default function BottomNav() {
+  const navigate = useNavigate();
   const [value, setValue] = useState('home');
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -36,6 +38,7 @@ export default function BottomNav() {
       <BottomNavigationAction
         label="Accueuil"
         value="home"
+        onClick={() => navigate('/')}
         icon={<HomeIcon />}
       />
       <BottomNavigationAction

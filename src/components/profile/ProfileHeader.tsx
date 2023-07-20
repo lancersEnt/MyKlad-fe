@@ -15,8 +15,12 @@ import MailIcon from '@mui/icons-material/Mail';
 import ReplyIcon from '@mui/icons-material/Reply';
 
 import './header.css';
+import User from '../../utils/Interfaces/User.interface';
 
-function ProfileHeader() {
+interface ProfileHeaderProps {
+  user: User;
+}
+function ProfileHeader({ user }: ProfileHeaderProps) {
   const [collapsed, setCollapsed] = React.useState(true);
   const handleCollapse = () => {
     setCollapsed(!collapsed);
@@ -78,7 +82,7 @@ function ProfileHeader() {
                     },
                   }}
                 >
-                  Ghassen Saaf
+                  {`${user.firstname} ${user.lastname}`}
                 </Typography>
                 <Typography
                   color="secondary"
@@ -94,7 +98,9 @@ function ProfileHeader() {
                     },
                   }}
                 >
-                  Klader debutant
+                  {user.permissions.includes('expert')
+                    ? 'Kladeur expert'
+                    : 'Kladeur'}
                 </Typography>
               </Stack>
             </Grid>
@@ -162,10 +168,10 @@ function ProfileHeader() {
                   5 invesstissements
                 </Typography>
                 <Typography fontSize={{ xs: 13, xl: 14 }} gutterBottom>
-                  53 Abonnées
+                  {user.followers.length} Abonnées
                 </Typography>
                 <Typography fontSize={{ xs: 13, xl: 14 }} gutterBottom>
-                  426 Abbonnements
+                  {user.following.length} Abbonnements
                 </Typography>
               </Stack>
             </Grid>

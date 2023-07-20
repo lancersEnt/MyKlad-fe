@@ -12,6 +12,7 @@ import PagesIcon from '@mui/icons-material/FileCopyOutlined';
 import Publications from './tabs/Publications';
 import About from './tabs/about/About';
 import Investments from './tabs/investments/Investments';
+import User from '../../utils/Interfaces/User.interface';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -41,8 +42,11 @@ function a11yProps(index: number) {
     'aria-controls': `simple-tabpanel-${index}`,
   };
 }
+interface ProfileTabsProps {
+  user: User;
+}
 
-function ProfileTabs() {
+function ProfileTabs({ user }: ProfileTabsProps) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -91,7 +95,7 @@ function ProfileTabs() {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <Publications />
+        <Publications posts={user.posts} />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <About />

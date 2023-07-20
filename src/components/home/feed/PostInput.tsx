@@ -1,5 +1,9 @@
+/* eslint-disable react/button-has-type */
+/* eslint-disable import/no-extraneous-dependencies */
 import React, { ReactElement } from 'react';
 import { gql, useMutation } from '@apollo/client';
+import { Uploader } from 'uploader';
+import { UploadButton } from 'react-uploader';
 import {
   Avatar,
   Box,
@@ -27,6 +31,8 @@ import ShowMoreIcon from '@mui/icons-material/ExpandMore';
 // custom components
 import CustomTextField from '../../common/inputs/CustomTextField';
 
+const uploader = Uploader({ apiKey: 'public_12a1yRZAqHhRoJgXtTsJBZEq5Fhj' }); // Your real API key.
+
 const CREATE_POST = gql`
   mutation ($createPostInput: CreatePostInput!) {
     createPost(createPostInput: $createPostInput) {
@@ -47,6 +53,8 @@ function PostInput(): ReactElement {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [content, setContent] = React.useState('');
+  const [imageURL, setImageURL] = React.useState('');
+
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [postType, setPostType] = React.useState<string>('');
 
@@ -63,6 +71,7 @@ function PostInput(): ReactElement {
   const [createPost, { loading, error, data }] = useMutation(CREATE_POST, {
     onCompleted() {
       setOpen(false);
+      setImageURL('');
     },
   });
 
@@ -70,7 +79,8 @@ function PostInput(): ReactElement {
     await createPost({
       variables: {
         createPostInput: {
-          content: 'Bonjour la vie',
+          content,
+          imageUrl: imageURL,
           authorId: '',
         },
       },
@@ -181,6 +191,18 @@ function PostInput(): ReactElement {
               ),
             }}
           />
+          {postType === 'image' && (
+            <UploadButton
+              uploader={uploader}
+              options={{ multi: false }}
+              onComplete={(files) => setImageURL(files[0].fileUrl)}
+            >
+              {({ onClick }) => <button onClick={onClick}>Add Image...</button>}
+            </UploadButton>
+          )}
+          {imageURL !== '' && postType === 'image' && (
+            <img src={imageURL} width="150px" alt="postIMG" />
+          )}
         </DialogContent>
         <DialogActions sx={{ py: 2 }}>
           <Button

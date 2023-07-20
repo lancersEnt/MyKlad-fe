@@ -26,7 +26,7 @@ import NotificationsIcon from '@mui/icons-material/NotificationsNone';
 import AppsIcon from '@mui/icons-material/Apps';
 import SearchIcon from '@mui/icons-material/Search';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { RootState } from '../../../app/store';
 import { UseSignout } from '../../../hooks/auth/UseSignout';
@@ -47,6 +47,7 @@ const AppBar = styled(MuiAppBar, {
 
 export default function Navbar() {
   const user = useSelector((state: RootState) => state.auth.user);
+  const navigate = useNavigate();
   const { signout } = UseSignout();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
@@ -56,14 +57,22 @@ export default function Navbar() {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (destination?: string) => {
+    if (destination === 'profile') navigate(`/klader/${user.username}`);
+    if (destination === 'settings') navigate(`/settings`);
     setAnchorElUser(null);
   };
   return (
     <AppBar sx={{ backgroundColor: 'white' }}>
       <Container sx={{ m: 0 }} maxWidth={false}>
         <Toolbar disableGutters>
-          <Stack alignContent="center" justifyContent="center" direction="row">
+          <Stack
+            alignContent="center"
+            justifyContent="center"
+            direction="row"
+            sx={{ cursor: 'pointer' }}
+            onClick={() => navigate('/')}
+          >
             <Box sx={{ mr: 1 }}>
               <img src="/MyKladIcon.png" alt="MyKlad Icon" width="50px" />
             </Box>
@@ -163,27 +172,13 @@ export default function Navbar() {
                 horizontal: 'right',
               }}
               open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
+              onClose={() => handleCloseUserMenu()}
             >
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">
-                  <Link
-                    style={{ textDecoration: 'none', color: 'black' }}
-                    to="/klader/1"
-                  >
-                    Profile
-                  </Link>
-                </Typography>
+              <MenuItem onClick={() => handleCloseUserMenu('profile')}>
+                <Typography textAlign="center">Profile</Typography>
               </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">
-                  <Link
-                    style={{ textDecoration: 'none', color: 'black' }}
-                    to="/settings"
-                  >
-                    Settings
-                  </Link>
-                </Typography>
+              <MenuItem onClick={() => handleCloseUserMenu('settings')}>
+                <Typography textAlign="center">Settings</Typography>
               </MenuItem>
               <MenuItem onClick={() => signout()}>
                 <Typography textAlign="center">Logout</Typography>

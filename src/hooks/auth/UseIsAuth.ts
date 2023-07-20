@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { gql, useQuery } from '@apollo/client';
+import { useDispatch } from 'react-redux';
 
 const ME = gql`
   query Me {
@@ -7,13 +8,25 @@ const ME = gql`
       id
       firstname
       lastname
-      email
       username
+      email
+      followers {
+        firstname
+        lastname
+        username
+        email
+      }
+      following {
+        firstname
+        lastname
+        username
+        email
+      }
     }
   }
 `;
-
 export const UseIsAuth = () => {
-  const { loading, error, data } = useQuery(ME);
-  return { loading, error, data };
+  const { data, loading } = useQuery(ME);
+
+  return { data, loading };
 };

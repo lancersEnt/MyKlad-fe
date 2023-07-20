@@ -19,6 +19,7 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import GroupsIcon from '@mui/icons-material/Groups';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { useNavigate } from 'react-router-dom';
 
 export const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -30,6 +31,7 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function Sidebar() {
+  const navigate = useNavigate();
   return (
     <Drawer
       PaperProps={{
@@ -77,6 +79,7 @@ export default function Sidebar() {
                   mr: 'auto',
                   justifyContent: 'center',
                 }}
+                onClick={() => navigate('/')}
               >
                 <HomeIcon color="primary" />
               </ListItemIcon>
