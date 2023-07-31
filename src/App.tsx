@@ -13,13 +13,17 @@ import { login, logout } from './features/auth/authSlice';
 import { UseIsAuth } from './hooks/auth/UseIsAuth';
 
 // Lazy Loading Pages
-const Home = React.lazy(() => import('./pages/Home'));
 const SignIn = React.lazy(() => import('./pages/SignIn'));
 const Forgot = React.lazy(() => import('./pages/Forgot'));
 const SignUp = React.lazy(() => import('./pages/SignUp'));
 const AccountActivation = React.lazy(() => import('./pages/AccountActivation'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
+
+const Home = React.lazy(() => import('./pages/Home'));
 const Profile = React.lazy(() => import('./pages/Profile'));
+const Notifications = React.lazy(() => import('./pages/Notifications'));
+const PublicationView = React.lazy(() => import('./pages/PublicationView'));
+
 const Settings = React.lazy(() => import('./pages/Settings'));
 
 const theme = createTheme({
@@ -72,10 +76,26 @@ function App() {
             }
           />
           <Route
+            path="/notifications"
+            element={
+              <React.Suspense>
+                <Notifications />
+              </React.Suspense>
+            }
+          />
+          <Route
             path="/klader/:username"
             element={
               <React.Suspense>
                 <Profile />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/publication/:postId"
+            element={
+              <React.Suspense>
+                <PublicationView />
               </React.Suspense>
             }
           />
@@ -90,7 +110,6 @@ function App() {
             }
           />
         </Route>
-
         <Route
           path="/signup"
           element={

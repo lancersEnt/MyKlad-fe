@@ -7,7 +7,7 @@ function MyKladSignIn() {
       mr={{ md: '0px', sm: 'auto', xs: 'auto' }}
       sx={{ ml: 'auto' }}
       maxWidth="400px"
-      display={{ xs: 'none', sm: 'block' }}
+      display={{ xs: 'none', sm: 'none', md: 'block' }}
     >
       <Stack spacing={2}>
         <Stack direction="row" spacing={2}>

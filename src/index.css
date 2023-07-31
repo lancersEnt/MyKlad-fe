@@ -9,6 +9,8 @@
   background-color: white !important;
   color: black !important;
   border: 2px solid #305CE9;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 body {
@@ -28,4 +30,8 @@ body {
 
 .drawer{
   background-color: red !important;
+}
+
+.epr-preview {
+  display: none !important;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Avatar,
@@ -15,15 +15,74 @@ import MailIcon from '@mui/icons-material/Mail';
 import ReplyIcon from '@mui/icons-material/Reply';
 
 import './header.css';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { gql, useMutation } from '@apollo/client';
 import User from '../../utils/Interfaces/User.interface';
+import { RootState } from '../../app/store';
+import isFollowing from '../../utils/isFollowing';
+import UserList from '../common/UserList';
 
 interface ProfileHeaderProps {
   user: User;
+  refetch: any;
 }
-function ProfileHeader({ user }: ProfileHeaderProps) {
-  const [collapsed, setCollapsed] = React.useState(true);
+
+const FOLLOW = gql`
+  mutation follow($followInput: FollowInput!) {
+    follow(followInput: $followInput)
+  }
+`;
+
+const UNFOLLOW = gql`
+  mutation unfollow($unfollowInput: UnfollowInput!) {
+    unfollow(unfollowInput: $unfollowInput)
+  }
+`;
+function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
+  const authUser = useSelector((state: RootState) => state.auth.user);
+  const [follow] = useMutation(FOLLOW);
+  const [unfollow] = useMutation(UNFOLLOW);
+  const [collapsed, setCollapsed] = useState(true);
+  const [following, setFollowing] = useState(
+    isFollowing(user.username, authUser.following)
+  );
+
+  const [userListIsOpen, setUserListIsOpen] = useState(false);
+  const [usersList, setUsersList]: any[] = useState([]);
+  const [UserListTitle, setUserListTitle] = useState('');
+
   const handleCollapse = () => {
     setCollapsed(!collapsed);
+  };
+
+  const handleFollowButton = () => {
+    if (!following) {
+      follow({
+        variables: {
+          followInput: {
+            targetUserId: user.id,
+          },
+        },
+        onCompleted() {
+          refetch();
+          setFollowing(true);
+        },
+      });
+    }
+    if (following) {
+      unfollow({
+        variables: {
+          unfollowInput: {
+            targetUserId: user.id,
+          },
+        },
+        onCompleted() {
+          refetch();
+          setFollowing(false);
+        },
+      });
+    }
   };
 
   return (
@@ -45,7 +104,7 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
               borderColor: '#335DE8',
             }}
             alt="avatar"
-            src=""
+            src={user.profilePictureUrl}
           />
         </Grid>
         <Grid item xs={12} md={9.5}>
@@ -73,6 +132,7 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
                   variant="h6"
                   component="h2"
                   gutterBottom
+                  textTransform="capitalize"
                   sx={{
                     textAlign: {
                       sx: 'center',
@@ -82,7 +142,12 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
                     },
                   }}
                 >
-                  {`${user.firstname} ${user.lastname}`}
+                  <Link
+                    style={{ textDecoration: 'none', color: 'black' }}
+                    to={`/klader/${user.username}`}
+                  >
+                    {`${user.firstname} ${user.lastname}`}
+                  </Link>
                 </Typography>
                 <Typography
                   color="secondary"
@@ -113,7 +178,11 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
               justifyContent="center"
               my=".5rem"
             >
-              <Stack direction="row-reverse" spacing={1}>
+              <Stack
+                direction="row-reverse"
+                spacing={1}
+                display={user.id === authUser.id ? 'none' : 'flex'}
+              >
                 <IconButton
                   sx={{
                     width: '45px',
@@ -148,10 +217,12 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
                   <MailIcon />
                 </IconButton>
                 <Button
-                  variant="contained"
+                  onClick={handleFollowButton}
+                  variant={following ? 'outlined' : 'contained'}
                   sx={{ borderRadius: 25, px: '2rem' }}
+                  // disabled={following}
                 >
-                  S&apos;abonner
+                  {following ? 'Abonné' : "s'abonné"}
                 </Button>
               </Stack>
             </Grid>
@@ -167,10 +238,26 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
                 <Typography fontSize={{ xs: 13, xl: 14 }} gutterBottom>
                   5 invesstissements
                 </Typography>
-                <Typography fontSize={{ xs: 13, xl: 14 }} gutterBottom>
+                <Typography
+                  onClick={() => {
+                    setUserListTitle('Abonnées');
+                    setUsersList(user.followers);
+                    setUserListIsOpen(true);
+                  }}
+                  fontSize={{ xs: 13, xl: 14 }}
+                  gutterBottom
+                >
                   {user.followers.length} Abonnées
                 </Typography>
-                <Typography fontSize={{ xs: 13, xl: 14 }} gutterBottom>
+                <Typography
+                  onClick={() => {
+                    setUserListTitle('Abbonnements');
+                    setUsersList(user.following);
+                    setUserListIsOpen(true);
+                  }}
+                  fontSize={{ xs: 13, xl: 14 }}
+                  gutterBottom
+                >
                   {user.following.length} Abbonnements
                 </Typography>
               </Stack>
@@ -204,6 +291,12 @@ function ProfileHeader({ user }: ProfileHeaderProps) {
           </Typography>
         </Grid>
       </Grid>
+      <UserList
+        users={usersList}
+        title={UserListTitle}
+        open={userListIsOpen}
+        setOpen={setUserListIsOpen}
+      />
     </Box>
   );
 }

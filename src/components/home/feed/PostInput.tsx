@@ -1,6 +1,6 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState, useRef } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { Uploader } from 'uploader';
 import { UploadButton } from 'react-uploader';
@@ -15,6 +15,7 @@ import {
   Divider,
   IconButton,
   InputAdornment,
+  Menu,
   Stack,
   Typography,
   useMediaQuery,
@@ -29,9 +30,14 @@ import EmojiIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 import PublicIcon from '@mui/icons-material/Public';
 import ShowMoreIcon from '@mui/icons-material/ExpandMore';
 // custom components
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
+import { Close } from '@mui/icons-material';
 import CustomTextField from '../../common/inputs/CustomTextField';
+import { RootState } from '../../../app/store';
 
-const uploader = Uploader({ apiKey: 'public_12a1yRZAqHhRoJgXtTsJBZEq5Fhj' }); // Your real API key.
+const uploader = Uploader({ apiKey: 'public_kW15bZn8U7vFK5hjt2GgJgDvGkLy' }); // Your real API key.
 
 const CREATE_POST = gql`
   mutation ($createPostInput: CreatePostInput!) {
@@ -44,49 +50,50 @@ const CREATE_POST = gql`
       user {
         id
         firstname
+        username
       }
     }
   }
 `;
 
 function PostInput(): ReactElement {
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const [content, setContent] = React.useState('');
-  const [imageURL, setImageURL] = React.useState('');
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openEmojiMenu = Boolean(anchorEl);
+  const [content, setContent] = useState('');
+  const [imageURL, setImageURL] = useState('');
+  const user = useSelector((state: RootState) => state.auth.user);
 
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const [postType, setPostType] = React.useState<string>('');
-
-  const handleClickOpen = (type: string) => {
-    setPostType(type);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setPostType('');
-    setOpen(false);
-  };
-
-  const [createPost, { loading, error, data }] = useMutation(CREATE_POST, {
+  const [createPost] = useMutation(CREATE_POST, {
     onCompleted() {
-      setOpen(false);
       setImageURL('');
+      setContent('');
     },
   });
 
   const handleCreatePost = async () => {
-    await createPost({
-      variables: {
-        createPostInput: {
-          content,
-          imageUrl: imageURL,
-          authorId: '',
+    if (content.length > 3 || imageURL !== '')
+      await createPost({
+        variables: {
+          createPostInput: {
+            content,
+            imageUrl: imageURL,
+            authorId: '',
+          },
         },
-      },
-    });
+      });
   };
 
+  const handleEmoji = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseEmojiMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const addEmoji = (emojiData: EmojiClickData, event: MouseEvent) => {
+    setContent(`${content}${emojiData.emoji} `);
+  };
   return (
     <Box
       sx={{
@@ -98,122 +105,164 @@ function PostInput(): ReactElement {
         boxShadow: 1,
       }}
     >
-      <Stack direction="row" spacing={2}>
-        <Avatar src="" alt="user-avatar" />
-        <Box>
-          <Typography fontSize={20} fontWeight={400} lineHeight={2} mb={3}>
-            Que voulez-vous poster?
-          </Typography>
-          <Stack direction="row" spacing={2}>
-            <IconButton
-              sx={{
-                backgroundColor: '#F5F6F9',
-              }}
-              onClick={() => handleClickOpen('note')}
-            >
-              <NoteIcon />
-            </IconButton>
-            <IconButton
-              sx={{
-                backgroundColor: '#F5F6F9',
-              }}
-              onClick={() => handleClickOpen('image')}
-            >
-              <PhotoIcon />
-            </IconButton>
-            <IconButton
-              sx={{
-                backgroundColor: '#F5F6F9',
-              }}
-              onClick={() => handleClickOpen('link')}
-            >
-              <LinkIcon />
-            </IconButton>
-          </Stack>
-        </Box>
-      </Stack>
-      <Dialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          sx: {
-            backgroundColor: 'white',
-            borderRadius: 3,
-            width: { md: '500px', lg: '750px' },
-            px: 3,
-          },
-        }}
+      <Stack
+        direction="row"
+        spacing={2}
+        mb={2}
+        sx={{ display: 'flex', alignItems: 'center' }}
       >
-        <DialogTitle textAlign="center">Créer un post</DialogTitle>
-        <Divider />
-        <DialogContent>
-          <Stack direction="row" spacing={2} mb={2}>
-            <Avatar
-              src=""
-              alt="profile-avatar"
-              sx={{ width: '4rem', height: '4rem' }}
-            />
-            <Stack spacing={2}>
-              <Typography component="h3" fontSize={16} fontWeight={500}>
-                Ghassen Saaf
-              </Typography>
-              <Button
-                sx={{ borderRadius: 25 }}
-                variant="contained"
-                size="small"
-                color="secondary"
-              >
-                <PublicIcon />
-                <Typography fontSize={12} textTransform="none">
-                  Tout le monde
-                </Typography>
-                <ShowMoreIcon />
-              </Button>
-            </Stack>
-          </Stack>
-          <CustomTextField
-            placeholder="Ecrivez un commentaire ... "
-            multiline
-            fullWidth
-            variant="filled"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            InputProps={{
-              hiddenLabel: true,
-              disableUnderline: true,
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton edge="end">
-                    <EmojiIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+        <Avatar src={user.profilePictureUrl} alt="user-avatar" />
+        <Typography
+          component="h3"
+          fontSize={16}
+          fontWeight={500}
+          textTransform="capitalize"
+        >
+          <Link
+            style={{ textDecoration: 'none', color: 'black' }}
+            to={`/klader/${user.username}`}
+          >
+            {`${user.firstname} ${user.lastname}`}
+          </Link>
+        </Typography>
+      </Stack>
+      <Box>
+        <CustomTextField
+          placeholder="Ecrivez un commentaire ... "
+          multiline
+          fullWidth
+          autoFocus
+          variant="filled"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          InputProps={{
+            hiddenLabel: true,
+            disableUnderline: true,
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-controls={openEmojiMenu ? 'emoji-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={openEmojiMenu ? 'true' : undefined}
+                  onClick={handleEmoji}
+                  edge="end"
+                >
+                  <EmojiIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          sx={{ mb: 2 }}
+        />
+        <Menu
+          id="emoji-menu"
+          anchorEl={anchorEl}
+          open={openEmojiMenu}
+          onClose={handleCloseEmojiMenu}
+          PaperProps={{
+            style: {
+              borderRadius: '.5rem',
+            },
+          }}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+            style: {
+              padding: 0,
+            },
+          }}
+          sx={{ p: 0 }}
+        >
+          <EmojiPicker
+            emojiStyle={EmojiStyle.NATIVE}
+            onEmojiClick={addEmoji}
+            searchDisabled
           />
-          {postType === 'image' && (
-            <UploadButton
-              uploader={uploader}
-              options={{ multi: false }}
-              onComplete={(files) => setImageURL(files[0].fileUrl)}
-            >
-              {({ onClick }) => <button onClick={onClick}>Add Image...</button>}
-            </UploadButton>
-          )}
-          {imageURL !== '' && postType === 'image' && (
-            <img src={imageURL} width="150px" alt="postIMG" />
-          )}
-        </DialogContent>
-        <DialogActions sx={{ py: 2 }}>
+        </Menu>
+        <Stack direction="row" spacing={2} justifyContent="space-between">
+          <UploadButton
+            uploader={uploader}
+            options={{
+              showRemoveButton: true,
+              multi: false,
+              mimeTypes: ['image/jpeg'],
+              // to use on profile picture
+              // editor: {
+              //   images: {
+              //     crop: true,
+              //     cropRatio: 1,
+              //     cropShape: 'circ',
+              //     preview: true,
+              //   },
+              // },
+            }}
+            onComplete={(files) => setImageURL(files[0].fileUrl)}
+          >
+            {({ onClick }) => (
+              <IconButton
+                sx={{
+                  backgroundColor: '#F5F6F9',
+                }}
+                onClick={onClick}
+              >
+                <PhotoIcon />
+              </IconButton>
+            )}
+          </UploadButton>
           <Button
             sx={{ borderRadius: 25 }}
             variant="contained"
             onClick={handleCreatePost}
+            color="primary"
           >
             Publier
           </Button>
-        </DialogActions>
-      </Dialog>
+        </Stack>
+      </Box>
+      {imageURL !== '' && (
+        <Box
+          sx={{
+            position: 'relative',
+            display: 'inline-block',
+            // backgroundImage: `url(${imageURL})`,
+            // backgroundSize: 'contain',
+            // backgroundRepeat: 'no-repeat',
+            // backgroundPosition: 'center center',
+            // width: '125px',
+            // height: '250px',
+
+            // mt: 2,
+          }}
+        >
+          <img
+            src={imageURL}
+            alt=""
+            style={{
+              maxWidth: '250px',
+              border: '2px solid #305CE9',
+              borderRadius: '.5rem',
+            }}
+          />
+          <Close
+            sx={{
+              position: 'absolute',
+              right: 10,
+              top: 10,
+              color: 'white',
+              backgroundColor: '#305CE9',
+              p: 1,
+              zIndex: 20,
+              borderRadius: '50%',
+              border: '1px solid white',
+
+              width: 30,
+              height: 30,
+              cursor: 'pointer',
+            }}
+            onClick={() => setImageURL('')}
+          />
+          {/* <img src={imageURL} width="150px" alt="postIMG" /> */}
+        </Box>
+      )}
     </Box>
   );
 }

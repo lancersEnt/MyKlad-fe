@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import {
   Avatar,
   Box,
@@ -8,6 +9,7 @@ import {
   Divider,
   IconButton,
   InputAdornment,
+  Menu,
   Stack,
   styled,
   Typography,
@@ -29,6 +31,7 @@ import SendRounded from '@mui/icons-material/SendRounded';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
 import CustomTextField from '../../common/inputs/CustomTextField';
 import { dateToNormalFormat } from '../../../utils/dateUtils';
 
@@ -36,6 +39,7 @@ import { dateToNormalFormat } from '../../../utils/dateUtils';
 import Post from '../../../utils/Interfaces/Post.Interface';
 import Comment from '../../../utils/Interfaces/Comment.interface';
 import { RootState } from '../../../app/store';
+import UserList from '../../common/UserList';
 
 const CustomCard = styled(Card)(({ theme }) => ({
   border: 'none',
@@ -84,6 +88,7 @@ const POST_COMMENTS = gql`
         firstname
         lastname
         username
+        profilePictureUrl
       }
       likersIds
       user {
@@ -92,6 +97,7 @@ const POST_COMMENTS = gql`
         lastname
         email
         username
+        profilePictureUrl
       }
     }
   }
@@ -142,32 +148,34 @@ const COMMENT_UNLIKE_SUBSCRIPTION = gql`
 
 function Publication({ post }: PublicationProps) {
   const user = useSelector((state: RootState) => state.auth.user);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openEmojiMenu = Boolean(anchorEl);
+
   const [comments, setComments] = useState(post.comments);
   const [commentsF, setCommentsF] = useState(false);
   const [commentContent, setCommentContent] = useState('');
-  const { data: subData, loading: subLoading } = useSubscription(
-    COMMENT_SUBSCRIPTION,
-    {
-      variables: { postId: post.id },
-    }
-  );
+
+  const [userListIsOpen, setUserListIsOpen] = useState(false);
+  const [usersList, setUsersList]: any[] = useState([]);
+  const [UserListTitle, setUserListTitle] = useState('');
+
+  const { data: subData } = useSubscription(COMMENT_SUBSCRIPTION, {
+    variables: { postId: post.id },
+  });
   const { data: likeSubData } = useSubscription(COMMENT_LIKE_SUBSCRIPTION, {
     variables: { postId: post.id },
   });
   const { data: unlikeSubData } = useSubscription(COMMENT_UNLIKE_SUBSCRIPTION, {
     variables: { postId: post.id },
-    onComplete() {
-      console.log('rr');
-    },
+    onComplete() {},
   });
 
-  const [postComments, { data: updatedPostComments, refetch }] = useLazyQuery(
-    POST_COMMENTS,
-    { variables: { postId: post.id } }
-  );
+  const [postComments, { refetch }] = useLazyQuery(POST_COMMENTS, {
+    variables: { postId: post.id },
+  });
 
-  const [createComment, { loading, error, data }] = useMutation(ADD_COMMENT, {
-    onCompleted(res) {
+  const [createComment] = useMutation(ADD_COMMENT, {
+    onCompleted() {
       setCommentContent('');
     },
   });
@@ -178,19 +186,32 @@ function Publication({ post }: PublicationProps) {
   const [unlikeComment] = useMutation(UNLIKE_COMMENT);
 
   const handleCreateComment = async () => {
-    await createComment({
-      variables: {
-        createCommentInput: {
-          content: commentContent,
-          postId: post.id,
-          postOwnerId: post.authorId,
+    if (commentContent.length > 0)
+      await createComment({
+        variables: {
+          createCommentInput: {
+            content: commentContent,
+            postId: post.id,
+            postOwnerId: post.authorId,
+            postSubscribers: JSON.stringify(post.subscribers),
+          },
         },
-      },
-    });
+      });
+  };
+
+  const handleEmoji = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseEmojiMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const addEmoji = (emojiData: EmojiClickData, event: MouseEvent) => {
+    setCommentContent(`${commentContent}${emojiData.emoji} `);
   };
 
   useEffect(() => {
-    console.log();
     if (
       (subData?.commentCreated?.newComment &&
         subData?.commentCreated?.newComment.postId === post.id) ||
@@ -226,15 +247,23 @@ function Publication({ post }: PublicationProps) {
               <Avatar
                 sx={{ width: '50px', height: '50px' }}
                 alt="Avatar"
-                src=""
+                src={post.user.profilePictureUrl}
               />
             </IconButton>
             <Stack justifyContent="center" pr={2}>
-              <Typography fontWeight={700} sx={{ textTransform: 'capitalize' }}>
-                {`${post.user.firstname} ${post.user.lastname}`}
+              <Typography fontWeight={700} textTransform="capitalize">
+                <Link
+                  style={{ textDecoration: 'none', color: 'black' }}
+                  to={`/klader/${post.user.username}`}
+                >
+                  {`${post.user.firstname} ${post.user.lastname}`}
+                </Link>
               </Typography>
-              <Typography fontSize={14} color="grey">
-                {`${dateToNormalFormat(post.createdAt)}`}
+              <Typography fontSize={12} textTransform="unset">
+                <Link
+                  style={{ textDecoration: 'underline', color: 'gray' }}
+                  to={`/publication/${post.id}`}
+                >{`${dateToNormalFormat(post.createdAt)}`}</Link>
               </Typography>
             </Stack>
           </Stack>
@@ -252,7 +281,7 @@ function Publication({ post }: PublicationProps) {
         />
       )}
       <CardContent sx={{ px: 0 }}>
-        <Container>
+        <Box mx={2}>
           {/* <Stack
             direction="row"
             spacing={2}
@@ -306,6 +335,12 @@ function Publication({ post }: PublicationProps) {
                     fontWeight={400}
                     color="grey"
                     mx=".2rem"
+                    sx={{ textDecoration: 'underline', cursor: 'pointer' }}
+                    onClick={() => {
+                      setUserListTitle('Kladeurs réagis');
+                      setUsersList(post.likers);
+                      if (post.likers.length > 0) setUserListIsOpen(true);
+                    }}
                   >
                     {post.likersIds.length}
                   </Typography>
@@ -379,10 +414,10 @@ function Publication({ post }: PublicationProps) {
               </Stack>
             </Stack>
           </Box>
-        </Container>
+        </Box>
 
         {comments.length > 0 && <Divider sx={{ my: 2 }} />}
-        <Container>
+        <Box mx={2}>
           {comments.map((comment: Comment, index) => (
             <Stack key={comment.id} sx={{ px: 1 }}>
               <Stack
@@ -390,9 +425,17 @@ function Publication({ post }: PublicationProps) {
                 sx={{ display: 'flex', alignItems: 'center' }}
               >
                 <IconButton sx={{ my: 'auto' }}>
-                  <Avatar alt="Avatar" sx={{ width: 30, height: 30 }} src="" />
+                  <Avatar
+                    alt="Avatar"
+                    sx={{ width: 30, height: 30 }}
+                    src={comment.user.profilePictureUrl}
+                  />
                 </IconButton>
-                <Typography fontWeight={500} fontSize={14}>
+                <Typography
+                  fontWeight={500}
+                  fontSize={14}
+                  textTransform="capitalize"
+                >
                   <Link
                     style={{ textDecoration: 'none', color: 'black' }}
                     to={`/klader/${comment.user.username}`}
@@ -440,12 +483,12 @@ function Publication({ post }: PublicationProps) {
             </Stack>
           ))}
           {/* <Divider sx={{ my: 1 }} /> */}
-        </Container>
+        </Box>
         <Divider sx={{ my: 2 }} />
-        <Container sx={{ pl: 0 }}>
+        <Box mx={2} sx={{ pl: 0 }}>
           <Stack direction="row" sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton sx={{ my: 'auto' }}>
-              <Avatar alt="Avatar" src="" />
+              <Avatar alt="Avatar" src={user.profilePictureUrl} />
             </IconButton>
             <CustomTextField
               sx={{
@@ -462,13 +505,43 @@ function Publication({ post }: PublicationProps) {
                 disableUnderline: true,
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton edge="end">
+                    <IconButton
+                      aria-controls={openEmojiMenu ? 'emoji-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={openEmojiMenu ? 'true' : undefined}
+                      onClick={handleEmoji}
+                      edge="end"
+                    >
                       <EmojiIcon />
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
             />
+            <Menu
+              id="emoji-menu"
+              anchorEl={anchorEl}
+              open={openEmojiMenu}
+              onClose={handleCloseEmojiMenu}
+              PaperProps={{
+                style: {
+                  borderRadius: '.5rem',
+                },
+              }}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+                style: {
+                  padding: 0,
+                },
+              }}
+              sx={{ p: 0 }}
+            >
+              <EmojiPicker
+                emojiStyle={EmojiStyle.NATIVE}
+                onEmojiClick={addEmoji}
+                searchDisabled
+              />
+            </Menu>
             <IconButton
               sx={{ my: 'auto' }}
               onClick={() => handleCreateComment()}
@@ -476,8 +549,14 @@ function Publication({ post }: PublicationProps) {
               <SendRounded />
             </IconButton>
           </Stack>
-        </Container>
+        </Box>
       </CardContent>
+      <UserList
+        users={usersList}
+        title={UserListTitle}
+        open={userListIsOpen}
+        setOpen={setUserListIsOpen}
+      />
     </CustomCard>
   );
 }

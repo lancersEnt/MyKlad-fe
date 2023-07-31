@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, MouseEvent, ReactElement } from 'react';
 import { useForm } from 'react-hook-form';
@@ -15,6 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
+import moment from 'moment';
 import CustomTextField from '../common/inputs/CustomTextField';
 import CustomSelectField from '../common/inputs/CustomSelectField';
 import { UseSignup } from '../../hooks/auth/UseSignup';
@@ -58,6 +60,10 @@ function SignUpForm(): ReactElement {
   const { signup } = UseSignup(setSignedUp, reset);
 
   const onSubmit = handleSubmit(async (formValues) => {
+    const date = moment
+      .utc(formValues.dateOfBirth.toLocaleString())
+      .format('YYYY-MM-DD');
+    formValues.dateOfBirth = new Date(date);
     await signup({
       variables: { createUserInput: { ...formValues, permissions: ['user'] } },
     });

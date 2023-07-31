@@ -10,6 +10,7 @@ export default interface Post {
   imageUrl: string;
   likersIds: string[];
   likers: User[];
+  subscribers: User[];
   user: User;
   comments: Comment[];
 }

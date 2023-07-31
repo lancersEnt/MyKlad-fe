@@ -1,6 +1,5 @@
 /* eslint-disable import/prefer-default-export */
 import { gql, useQuery } from '@apollo/client';
-import { useDispatch } from 'react-redux';
 
 const ME = gql`
   query Me {
@@ -9,17 +8,25 @@ const ME = gql`
       firstname
       lastname
       username
+      dateOfBirth
+      city
+      address
+      nationality
+      phone
+      profilePictureUrl
       email
       followers {
         firstname
         lastname
         username
+        profilePictureUrl
         email
       }
       following {
         firstname
         lastname
         username
+        profilePictureUrl
         email
       }
     }

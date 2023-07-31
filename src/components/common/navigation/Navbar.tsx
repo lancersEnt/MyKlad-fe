@@ -1,6 +1,8 @@
-import * as React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
+import { useSnackbar } from 'notistack';
 
 // Material Components
 
@@ -10,6 +12,8 @@ import {
   Box,
   Chip,
   Container,
+  Divider,
+  Drawer,
   IconButton,
   Menu,
   MenuItem,
@@ -26,10 +30,13 @@ import NotificationsIcon from '@mui/icons-material/NotificationsNone';
 import AppsIcon from '@mui/icons-material/Apps';
 import SearchIcon from '@mui/icons-material/Search';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import { gql, useMutation, useQuery, useSubscription } from '@apollo/client';
 import { RootState } from '../../../app/store';
 import { UseSignout } from '../../../hooks/auth/UseSignout';
+import Notification from '../../../utils/Interfaces/Notification.interface';
+import NotificationEntry from '../../notifications/Notification';
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -45,15 +52,88 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
+const UNSEEN_NOTIFICATIONS_COUNT = gql`
+  query Query {
+    userUnseenNotificationsCount
+  }
+`;
+
+const LATEST_NOTIFICATIONS = gql`
+  query LatestNotifications {
+    userLatestNotifications {
+      id
+      title
+      body
+      action
+      createdBy
+      targetUserId
+      seen
+      createdAt
+      user {
+        id
+        username
+        firstname
+        lastname
+        profilePictureUrl
+      }
+    }
+  }
+`;
+
+const NOTIFICATION_SUBSCRIPTION = gql`
+  subscription Subscription($userId: String) {
+    notificationCreated(userId: $userId) {
+      notification {
+        id
+        seen
+        body
+        action
+        targetUserId
+        createdBy
+      }
+    }
+  }
+`;
+
+const MARK_AS_SEEN = gql`
+  mutation MarkAsSeen($markAsSeenId: String) {
+    markAsSeen(id: $markAsSeenId) {
+      id
+    }
+  }
+`;
+
 export default function Navbar() {
   const user = useSelector((state: RootState) => state.auth.user);
+
+  const [markAsSeen] = useMutation(MARK_AS_SEEN);
+
   const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
   const { signout } = UseSignout();
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
+
+  const { data: unseenNotificationsCount, refetch: refetchUnseen } = useQuery(
+    UNSEEN_NOTIFICATIONS_COUNT
   );
 
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const { data: notificationData } = useSubscription(
+    NOTIFICATION_SUBSCRIPTION,
+    {
+      variables: { userId: user.id },
+    }
+  );
+
+  const { data: latestNotifications, refetch: refetchLatest } =
+    useQuery(LATEST_NOTIFICATIONS);
+
+  const [notificationsPanel, setNotificationsPanel] = useState(false);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+  const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
 
@@ -62,6 +142,51 @@ export default function Navbar() {
     if (destination === 'settings') navigate(`/settings`);
     setAnchorElUser(null);
   };
+
+  useEffect(() => {
+    if (notificationData?.notificationCreated?.notification) {
+      enqueueSnackbar(
+        <Box>
+          <Stack
+            direction="row"
+            spacing={2}
+            display="flex"
+            alignContent="center"
+          >
+            <Typography fontFamily="Ubuntu">
+              {notificationData.notificationCreated.notification.body}
+            </Typography>
+          </Stack>
+        </Box>,
+        {
+          key: notificationData.notificationCreated.notification.title,
+          variant: 'success',
+          anchorOrigin: { horizontal: 'left', vertical: 'bottom' },
+          SnackbarProps: {
+            onClick: () => {
+              navigate(
+                notificationData.notificationCreated.notification.action
+              );
+              closeSnackbar(
+                notificationData.notificationCreated.notification.title
+              );
+            },
+            style: {},
+          },
+          hideIconVariant: true,
+          autoHideDuration: 5000,
+        }
+      );
+      refetchLatest();
+      refetchUnseen();
+    }
+  }, [notificationData, enqueueSnackbar, closeSnackbar]);
+
+  useEffect(() => {
+    refetchLatest();
+    refetchUnseen();
+  }, [location]);
+
   return (
     <AppBar sx={{ backgroundColor: 'white' }}>
       <Container sx={{ m: 0 }} maxWidth={false}>
@@ -109,8 +234,18 @@ export default function Navbar() {
                 </Tooltip>
               </Box>
               <Stack display={{ xs: 'none', sm: 'none', md: 'block' }}>
-                <Typography color="black" fontSize=".8rem" fontWeight="500">
-                  {`${user.firstname} ${user.lastname}`}
+                <Typography
+                  color="black"
+                  fontSize=".8rem"
+                  fontWeight="500"
+                  textTransform="capitalize"
+                >
+                  <Link
+                    style={{ textDecoration: 'none', color: 'black' }}
+                    to={`/klader/${user.username}`}
+                  >
+                    {`${user.firstname} ${user.lastname}`}
+                  </Link>
                   {/* <ExpandMoreIcon /> */}
                 </Typography>
                 <Chip
@@ -122,7 +257,7 @@ export default function Navbar() {
               </Stack>
 
               <IconButton sx={{ p: 0 }}>
-                <Avatar alt="Avatar" src="" />
+                <Avatar alt="Avatar" src={user.profilePictureUrl} />
               </IconButton>
               <IconButton
                 sx={{
@@ -131,8 +266,16 @@ export default function Navbar() {
                   backgroundColor: '#F5F6F9',
                   p: 1,
                 }}
+                onClick={() => setNotificationsPanel(!notificationsPanel)}
               >
-                <Badge badgeContent={17} color="primary">
+                <Badge
+                  badgeContent={
+                    unseenNotificationsCount
+                      ? unseenNotificationsCount.userUnseenNotificationsCount
+                      : ' '
+                  }
+                  color="primary"
+                >
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
@@ -187,6 +330,53 @@ export default function Navbar() {
           </Box>
         </Toolbar>
       </Container>
+      <Drawer
+        anchor="right"
+        open={notificationsPanel}
+        onClose={() => setNotificationsPanel(false)}
+        PaperProps={{ style: { borderRadius: '1rem', height: 'auto' } }}
+        sx={{
+          maxWidth: '350px',
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: {
+            maxWidth: '350px',
+            boxSizing: 'border-box',
+          },
+        }}
+      >
+        <Toolbar />
+        {/* <DrawerHeader /> */}
+        <Box sx={{ minWidth: '350px' }}>
+          <Box>
+            <Typography px={2} py={1}>
+              Dernières notifications
+            </Typography>
+          </Box>
+          {latestNotifications &&
+            latestNotifications?.userLatestNotifications.map(
+              (notification: Notification, index: number) => (
+                <Box key={notification.id}>
+                  <NotificationEntry notification={notification} />
+                  {index + 1 !==
+                    latestNotifications.userLatestNotifications.length && (
+                    <Divider />
+                  )}
+                </Box>
+              )
+            )}
+          <Box display="flex" justifyContent="center">
+            <Typography px={2} py={1} fontSize={12}>
+              <Link
+                style={{ textDecoration: 'underline', color: '#305CE9' }}
+                to="/notifications"
+                onClick={() => setNotificationsPanel(false)}
+              >
+                Voir tout
+              </Link>
+            </Typography>
+          </Box>
+        </Box>
+      </Drawer>
     </AppBar>
   );
 }

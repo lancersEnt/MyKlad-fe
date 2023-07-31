@@ -11,4 +11,5 @@ export default interface User {
   followers: User[];
   following: User[];
   posts: Post[];
+  profilePictureUrl: string;
 }

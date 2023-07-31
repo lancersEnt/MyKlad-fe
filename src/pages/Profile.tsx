@@ -15,15 +15,18 @@ const GET_USER = gql`
       permissions
       username
       email
+      profilePictureUrl
       followers {
         firstname
         lastname
         username
+        profilePictureUrl
         email
       }
       following {
         firstname
         lastname
+        profilePictureUrl
         username
         email
       }
@@ -34,10 +37,16 @@ const GET_USER = gql`
         createdAt
         imageUrl
         likersIds
+        subscribers {
+          id
+          firstname
+          lastname
+        }
         likers {
           id
           firstname
           lastname
+          profilePictureUrl
           username
         }
         comments {
@@ -48,18 +57,23 @@ const GET_USER = gql`
             username
             firstname
             lastname
+            profilePictureUrl
+            username
           }
           likersIds
           likers {
             id
             firstname
             lastname
+            profilePictureUrl
             username
           }
         }
         user {
           id
+          username
           firstname
+          profilePictureUrl
           lastname
         }
       }
@@ -74,6 +88,7 @@ const POST_SUBSCRIPTION = gql`
         id
         user {
           id
+          username
         }
       }
     }
@@ -128,7 +143,7 @@ function Profile() {
   return (
     <Box mb="5rem">
       {loading && 'loading ... '}
-      {!loading && error && <h4>User not found</h4>}
+      {!loading && error && <h4>{error.message}</h4>}
       {!loading && user && (
         <Grid
           container
@@ -137,7 +152,7 @@ function Profile() {
         >
           <Grid item lg={2} display={{ xs: 'none', sm: 'none', lg: 'flex' }} />
           <Grid item xs={12} sm={12} lg={8}>
-            <ProfileHeader user={user.findByUsername} />
+            <ProfileHeader user={user.findByUsername} refetch={refetch} />
             <ProfileTabs user={user.findByUsername} />
           </Grid>
         </Grid>

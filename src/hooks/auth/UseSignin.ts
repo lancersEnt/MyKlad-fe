@@ -13,6 +13,24 @@ const SIGN_IN = gql`
         lastname
         username
         email
+        city
+        nationality
+        dateOfBirth
+        address
+        phone
+        profilePictureUrl
+        followers {
+          username
+          firstname
+          lastname
+          profilePictureUrl
+        }
+        following {
+          username
+          firstname
+          lastname
+          profilePictureUrl
+        }
       }
     }
   }

@@ -10,6 +10,14 @@ interface User {
   lastname: string;
   email: string;
   username: string;
+  dateOfBirth: string;
+  city: string;
+  phone: string;
+  address: string;
+  nationality: string;
+  profilePictureUrl: string;
+  followers: User[];
+  following: User[];
 }
 
 interface AuthState {
@@ -25,6 +33,14 @@ const initialState: AuthState = {
     lastname: '',
     email: '',
     username: '',
+    dateOfBirth: '',
+    city: '',
+    phone: '',
+    address: '',
+    nationality: '',
+    profilePictureUrl: '',
+    followers: [],
+    following: [],
   },
 };
 
@@ -37,6 +53,9 @@ const authSlice = createSlice({
       state.user = action.payload;
       cookies.set('isAuthenticated', 'true', { path: '/' });
     },
+    updateFollowing: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
+    },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = initialState.user;
@@ -45,5 +64,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, updateFollowing } = authSlice.actions;
 export default authSlice.reducer;

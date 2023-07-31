@@ -16,11 +16,17 @@ const GET_POSTS = gql`
       createdAt
       imageUrl
       likersIds
+      subscribers {
+        id
+        firstname
+        lastname
+      }
       likers {
         id
         firstname
         lastname
         username
+        profilePictureUrl
       }
       comments {
         id
@@ -31,18 +37,22 @@ const GET_POSTS = gql`
           firstname
           lastname
           username
+          profilePictureUrl
         }
         user {
           id
           firstname
           lastname
           username
+          profilePictureUrl
         }
       }
       user {
         id
         firstname
         lastname
+        username
+        profilePictureUrl
       }
     }
   }
