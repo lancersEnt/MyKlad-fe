@@ -69,8 +69,13 @@ function UserList({ users, title, open, setOpen }: UserListProps) {
                   textTransform="capitalize"
                 >
                   <Link
+                    preventScrollReset={false}
                     style={{ textDecoration: 'none', color: 'black' }}
-                    to={`/klader/${user.username}`}
+                    to={
+                      user.permissions.includes('user')
+                        ? `/klader/${user.username}`
+                        : `/page/${user.username}`
+                    }
                   >{`${user.firstname} ${user.lastname}`}</Link>
                 </Typography>
               </Stack>

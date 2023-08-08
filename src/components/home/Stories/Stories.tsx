@@ -24,8 +24,9 @@ function AddStory() {
       }}
     >
       <Stack spacing={2} my="auto">
-        <AddIcon fontSize="large" sx={{ mx: 'auto' }} />
         <Typography fontSize={{ xs: '15px' }} align="center">
+          <AddIcon />
+          <br />
           Ajouter votre Story
         </Typography>
       </Stack>

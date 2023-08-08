@@ -10,6 +10,8 @@ export default interface User {
   permissions: string[];
   followers: User[];
   following: User[];
+  managers: User[];
+  pages: User[];
   posts: Post[];
   profilePictureUrl: string;
 }

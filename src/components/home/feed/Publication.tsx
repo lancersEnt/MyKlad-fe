@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
 import {
   Avatar,
   Box,
+  Button,
   Card,
   CardContent,
   CardMedia,
-  Container,
   Divider,
   IconButton,
   InputAdornment,
@@ -28,10 +30,11 @@ import ShareIcon from '@mui/icons-material/ShareOutlined';
 import SaveIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import EmojiIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 import SendRounded from '@mui/icons-material/SendRounded';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
+import ReactPlayer from 'react-player';
 import CustomTextField from '../../common/inputs/CustomTextField';
 import { dateToNormalFormat } from '../../../utils/dateUtils';
 
@@ -40,6 +43,21 @@ import Post from '../../../utils/Interfaces/Post.Interface';
 import Comment from '../../../utils/Interfaces/Comment.interface';
 import { RootState } from '../../../app/store';
 import UserList from '../../common/UserList';
+import {
+  COMMENT_LIKE_SUBSCRIPTION,
+  COMMENT_SUBSCRIPTION,
+  COMMENT_UNLIKE_SUBSCRIPTION,
+  POST_LIKE_SUBSCRIPTION,
+  POST_UNLIKE_SUBSCRIPTION,
+} from '../../../utils/GraphQL/Subscriptions';
+import { POST } from '../../../utils/GraphQL/Queries';
+import {
+  ADD_COMMENT,
+  LIKE_COMMENT,
+  LIKE_POST,
+  UNLIKE_COMMENT,
+  UNLIKE_POST,
+} from '../../../utils/GraphQL/Mutations';
 
 const CustomCard = styled(Card)(({ theme }) => ({
   border: 'none',
@@ -57,102 +75,26 @@ interface PublicationProps {
   post: Post;
 }
 
-const ADD_COMMENT = gql`
-  mutation Mutation($createCommentInput: CreateCommentInput!) {
-    createComment(createCommentInput: $createCommentInput) {
-      id
-      content
-    }
-  }
-`;
-
-const COMMENT_SUBSCRIPTION = gql`
-  subscription Subscription($postId: String!) {
-    commentCreated(postId: $postId) {
-      newComment {
-        id
-        postId
-      }
-    }
-  }
-`;
-
-const POST_COMMENTS = gql`
-  query PostComments($postId: String!) {
-    postComments(postId: $postId) {
-      id
-      content
-      authorId
-      likers {
-        id
-        firstname
-        lastname
-        username
-        profilePictureUrl
-      }
-      likersIds
-      user {
-        id
-        firstname
-        lastname
-        email
-        username
-        profilePictureUrl
-      }
-    }
-  }
-`;
-const LIKE_POST = gql`
-  mutation Mutation($postId: String!) {
-    likePost(postId: $postId)
-  }
-`;
-
-const UNLIKE_POST = gql`
-  mutation Mutation($postId: String!) {
-    unlikePost(postId: $postId)
-  }
-`;
-const LIKE_COMMENT = gql`
-  mutation Mutation($commentId: String!) {
-    likeComment(commentId: $commentId)
-  }
-`;
-
-const UNLIKE_COMMENT = gql`
-  mutation Mutation($commentId: String!) {
-    unlikeComment(commentId: $commentId)
-  }
-`;
-const COMMENT_LIKE_SUBSCRIPTION = gql`
-  subscription Subscription($postId: String!) {
-    commentLiked(postId: $postId) {
-      comment {
-        id
-        postId
-      }
-    }
-  }
-`;
-
-const COMMENT_UNLIKE_SUBSCRIPTION = gql`
-  subscription Subscription($postId: String!) {
-    commentUnliked(postId: $postId) {
-      comment {
-        id
-        postId
-      }
-    }
-  }
-`;
-
 function Publication({ post }: PublicationProps) {
   const user = useSelector((state: RootState) => state.auth.user);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openEmojiMenu = Boolean(anchorEl);
 
+  const commentsRef = useRef<HTMLDivElement>(null);
   const [comments, setComments] = useState(post.comments);
+  const [commentsToShow, setCommentsToShow] = useState(3);
+
+  const handleLoadMore = () => {
+    // Increase the number of comments to show by 5 when "Load More" button is clicked
+    setCommentsToShow((prev) =>
+      prev + 5 > comments.length ? comments.length : prev + 5
+    );
+  };
+
   const [commentsF, setCommentsF] = useState(false);
+  const [likers, setLikers] = useState(post.likers);
+  const [likersIds, setLikersIds] = useState(post.likersIds);
+  const [likersF, setLikersF] = useState(false);
   const [commentContent, setCommentContent] = useState('');
 
   const [userListIsOpen, setUserListIsOpen] = useState(false);
@@ -162,21 +104,38 @@ function Publication({ post }: PublicationProps) {
   const { data: subData } = useSubscription(COMMENT_SUBSCRIPTION, {
     variables: { postId: post.id },
   });
-  const { data: likeSubData } = useSubscription(COMMENT_LIKE_SUBSCRIPTION, {
-    variables: { postId: post.id },
-  });
-  const { data: unlikeSubData } = useSubscription(COMMENT_UNLIKE_SUBSCRIPTION, {
-    variables: { postId: post.id },
-    onComplete() {},
-  });
 
-  const [postComments, { refetch }] = useLazyQuery(POST_COMMENTS, {
+  const { data: commentLikeSubData } = useSubscription(
+    COMMENT_LIKE_SUBSCRIPTION,
+    {
+      variables: { postId: post.id },
+    }
+  );
+
+  const { data: commentUnlikeSubData } = useSubscription(
+    COMMENT_UNLIKE_SUBSCRIPTION,
+    {
+      variables: { postId: post.id },
+      onComplete() {},
+    }
+  );
+
+  const { data: likeSubData } = useSubscription(POST_LIKE_SUBSCRIPTION);
+  const { data: unlikeSubData } = useSubscription(POST_UNLIKE_SUBSCRIPTION);
+
+  const [fetchPost, { data, refetch: refetchPost }] = useLazyQuery(POST, {
     variables: { postId: post.id },
   });
 
   const [createComment] = useMutation(ADD_COMMENT, {
     onCompleted() {
       setCommentContent('');
+      if (commentsRef.current) {
+        commentsRef.current.scrollIntoView({
+          behavior: 'smooth', // You can also use 'auto' or 'instant'
+          block: 'start', // 'start', 'center', 'end', or 'nearest'
+        });
+      }
     },
   });
 
@@ -215,23 +174,61 @@ function Publication({ post }: PublicationProps) {
     if (
       (subData?.commentCreated?.newComment &&
         subData?.commentCreated?.newComment.postId === post.id) ||
-      (likeSubData?.commentLiked?.comment &&
-        likeSubData?.commentLiked?.comment.postId === post.id) ||
-      (unlikeSubData?.commentUnliked?.comment &&
-        unlikeSubData?.commentUnliked?.comment.postId === post.id)
+      (commentLikeSubData?.commentLiked?.comment &&
+        commentLikeSubData?.commentLiked?.comment.postId === post.id) ||
+      (commentUnlikeSubData?.commentUnliked?.comment &&
+        commentUnlikeSubData?.commentUnliked?.comment.postId === post.id)
     ) {
       if (commentsF) {
-        refetch();
+        refetchPost();
       } else
-        postComments({
+        fetchPost({
           onCompleted(res) {
-            setComments(res.postComments);
+            setComments(res.post.comments);
             setCommentsF(true);
           },
         });
     }
+
+    if (
+      likeSubData?.postLiked?.post &&
+      likeSubData?.postLiked?.post.id === post.id
+    ) {
+      if (likersF) refetchPost();
+      else
+        fetchPost({
+          onCompleted(res) {
+            setLikers(res.post.likers);
+            setLikersIds(res.post.likersIds);
+            setLikersF(true);
+          },
+        });
+    }
+
+    if (
+      unlikeSubData?.postUnliked?.post &&
+      unlikeSubData?.postUnliked?.post.id === post.id
+    ) {
+      if (likersF) refetchPost();
+      else
+        fetchPost({
+          onCompleted(res) {
+            setLikers(res.post.likers);
+            setLikersIds(res.post.likersIds);
+            setLikersF(true);
+          },
+        });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postComments, subData, likeSubData, unlikeSubData, post.id]);
+  }, [
+    // postComments,
+    subData,
+    commentLikeSubData,
+    likeSubData,
+    unlikeSubData,
+    commentUnlikeSubData,
+    post.id,
+  ]);
 
   return (
     <CustomCard sx={{ mb: 5, position: 'relative' }}>
@@ -253,14 +250,20 @@ function Publication({ post }: PublicationProps) {
             <Stack justifyContent="center" pr={2}>
               <Typography fontWeight={700} textTransform="capitalize">
                 <Link
+                    preventScrollReset
                   style={{ textDecoration: 'none', color: 'black' }}
-                  to={`/klader/${post.user.username}`}
+                  to={
+                    post.user.permissions.includes('user')
+                      ? `/klader/${post.user.username}`
+                      : `/page/${post.user.username}`
+                  }
                 >
                   {`${post.user.firstname} ${post.user.lastname}`}
                 </Link>
               </Typography>
               <Typography fontSize={12} textTransform="unset">
                 <Link
+                    preventScrollReset
                   style={{ textDecoration: 'underline', color: 'gray' }}
                   to={`/publication/${post.id}`}
                 >{`${dateToNormalFormat(post.createdAt)}`}</Link>
@@ -272,12 +275,35 @@ function Publication({ post }: PublicationProps) {
       <Box sx={{ px: 4 }}>
         <Typography>{post.content}</Typography>
       </Box>
+      {/* <ImageList cols={3} variant="woven" sx={{ height: '500px' }}>
+        <ImageListItem>
+          <img src={post.imageUrl} loading="lazy" alt="" />
+        </ImageListItem>
+        <ImageListItem>
+          <img src={post.imageUrl} loading="lazy" alt="" />
+        </ImageListItem>
+        <ImageListItem>
+          <img src={post.imageUrl} loading="lazy" alt="" />
+        </ImageListItem>
+      </ImageList> */}
       {post.imageUrl && (
         <CardMedia
           component="img"
           alt="alt"
           image={post.imageUrl}
           sx={{ maxHeight: '450px' }}
+        />
+      )}
+      {post.videoUrl && (
+        <ReactPlayer
+          width="100%"
+          light={!!post.videoUrl.match('youtube')}
+          id={`${post.videoUrl.replace(
+            '/raw/',
+            '/image/'
+          )}?input=video&f=webp&f2=jpeg`}
+          controls
+          url={post.videoUrl}
         />
       )}
       <CardContent sx={{ px: 0 }}>
@@ -309,6 +335,7 @@ function Publication({ post }: PublicationProps) {
             }}
           >
             <Stack
+              ref={commentsRef}
               direction="row"
               spacing={2}
               sx={{ justifyContent: 'space-between' }}
@@ -319,13 +346,11 @@ function Publication({ post }: PublicationProps) {
                     sx={{
                       my: 'auto',
                       cursor: 'pointer',
-                      color: post.likersIds.includes(user.id)
-                        ? '#305CE9'
-                        : 'grey',
+                      color: likersIds.includes(user.id) ? '#305CE9' : 'grey',
                     }}
                     onClick={() => {
                       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                      post.likersIds.includes(user.id)
+                      likersIds.includes(user.id)
                         ? unlikePost({ variables: { postId: post.id } })
                         : likePost({ variables: { postId: post.id } });
                     }}
@@ -338,11 +363,11 @@ function Publication({ post }: PublicationProps) {
                     sx={{ textDecoration: 'underline', cursor: 'pointer' }}
                     onClick={() => {
                       setUserListTitle('Kladeurs réagis');
-                      setUsersList(post.likers);
-                      if (post.likers.length > 0) setUserListIsOpen(true);
+                      setUsersList(likers);
+                      if (likers.length > 0) setUserListIsOpen(true);
                     }}
                   >
-                    {post.likersIds.length}
+                    {likers.length}
                   </Typography>
                   <Typography
                     lineHeight={2}
@@ -416,9 +441,11 @@ function Publication({ post }: PublicationProps) {
           </Box>
         </Box>
 
-        {comments.length > 0 && <Divider sx={{ my: 2 }} />}
+        {comments.length > 0 && commentsToShow > 0 && (
+          <Divider sx={{ my: 2 }} />
+        )}
         <Box mx={2}>
-          {comments.map((comment: Comment, index) => (
+          {comments.slice(0, commentsToShow).map((comment: Comment, index) => (
             <Stack key={comment.id} sx={{ px: 1 }}>
               <Stack
                 direction="row"
@@ -437,8 +464,13 @@ function Publication({ post }: PublicationProps) {
                   textTransform="capitalize"
                 >
                   <Link
+                    preventScrollReset
                     style={{ textDecoration: 'none', color: 'black' }}
-                    to={`/klader/${comment.user.username}`}
+                    to={
+                      comment.user.permissions.includes('user')
+                        ? `/klader/${comment.user.username}`
+                        : `/page/${comment.user.username}`
+                    }
                   >{`${comment.user.firstname} ${comment.user.lastname}`}</Link>
                 </Typography>
               </Stack>
@@ -456,7 +488,9 @@ function Publication({ post }: PublicationProps) {
                   onClick={() => {
                     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                     comment.likersIds.includes(user.id)
-                      ? unlikeComment({ variables: { commentId: comment.id } })
+                      ? unlikeComment({
+                          variables: { commentId: comment.id },
+                        })
                       : likeComment({ variables: { commentId: comment.id } });
                   }}
                 />
@@ -479,12 +513,28 @@ function Publication({ post }: PublicationProps) {
                   J&apos;aime
                 </Typography>
               </Box>
-              {index !== comments.length - 1 && <Divider sx={{ my: 1 }} />}
+              {index !== commentsToShow - 1 && <Divider sx={{ my: 1 }} />}
             </Stack>
           ))}
           {/* <Divider sx={{ my: 1 }} /> */}
         </Box>
-        <Divider sx={{ my: 2 }} />
+        {commentsToShow < comments.length && (
+          <>
+            <Divider sx={{ my: 1 }} />
+            <Box display="flex" justifyContent="center" mx={2}>
+              <Typography
+                sx={{ cursor: 'pointer' }}
+                onClick={handleLoadMore}
+                color="primary"
+              >
+                {commentsToShow === 0
+                  ? 'Afficher les commentaires'
+                  : 'Afficher plus'}
+              </Typography>
+            </Box>
+          </>
+        )}
+        <Divider sx={{ mb: 2, mt: 1 }} />
         <Box mx={2} sx={{ pl: 0 }}>
           <Stack direction="row" sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton sx={{ my: 'auto' }}>

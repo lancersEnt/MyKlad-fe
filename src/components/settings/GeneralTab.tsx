@@ -33,6 +33,7 @@ import { gql } from 'urql';
 import moment from 'moment';
 import { RootState } from '../../app/store';
 import CustomTextField from '../common/inputs/CustomTextField';
+import { UPDATE_USER } from '../../utils/GraphQL/Mutations';
 
 const uploader = Uploader({ apiKey: 'public_kW15bZn8U7vFK5hjt2GgJgDvGkLy' }); // Your real API key.
 
@@ -58,17 +59,6 @@ const actions = [
     name: 'Selectionner depuis vos photos MyKlad',
   },
 ];
-
-const UPDATE_USER = gql`
-  mutation Mutation(
-    $updateUserId: String!
-    $updateUserInput: UpdateUserInput!
-  ) {
-    updateUser(id: $updateUserId, updateUserInput: $updateUserInput) {
-      id
-    }
-  }
-`;
 
 function GeneralTab(): ReactElement {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -109,10 +99,6 @@ function GeneralTab(): ReactElement {
         updateUserId: user.id,
         updateUserInput: { ...formValues, profilePictureUrl },
       },
-    });
-    console.log({
-      updateUserId: user.id,
-      updateUserInput: { ...formValues, profilePictureUrl },
     });
   });
 

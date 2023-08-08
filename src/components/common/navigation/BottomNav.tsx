@@ -38,15 +38,16 @@ export default function BottomNav() {
       <BottomNavigationAction
         label="Accueuil"
         value="home"
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/', { preventScrollReset: false })}
         icon={<HomeIcon />}
       />
       <BottomNavigationAction
-        label="Amis"
+        label="kladeurs"
         value="friends"
+        onClick={() => navigate('/kladers', { preventScrollReset: false })}
         icon={<PeopleOutlineIcon />}
       />
-      <BottomNavigationAction
+      {/* <BottomNavigationAction
         label="Investissement"
         value="invests"
         icon={<BusinessCenterIcon />}
@@ -75,7 +76,7 @@ export default function BottomNav() {
         label="Calendrier"
         value="Calendrier"
         icon={<CalendarMonthIcon />}
-      />
+      /> */}
     </BottomNavigation>
   );
 }

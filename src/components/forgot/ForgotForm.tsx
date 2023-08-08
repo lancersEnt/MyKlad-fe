@@ -28,6 +28,7 @@ import { useNavigate } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
 
 import CustomTextField from '../common/inputs/CustomTextField';
+import { REQ_RES, RES_PASS } from '../../utils/GraphQL/Mutations';
 
 type FormValues = {
   email: string;
@@ -37,22 +38,6 @@ type Form2Values = {
   token: string;
   password: string;
 };
-
-const REQ_RES = gql`
-  mutation Mutation($email: String!) {
-    forgotPassword(email: $email) {
-      id
-    }
-  }
-`;
-
-const RES_PASS = gql`
-  mutation Mutation($token: String!, $password: String!) {
-    resetPassword(token: $token, password: $password) {
-      id
-    }
-  }
-`;
 
 function ForgotForm(): ReactElement {
   const [reqSent, setReqSent] = useState(false);

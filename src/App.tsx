@@ -21,10 +21,13 @@ const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 
 const Home = React.lazy(() => import('./pages/Home'));
 const Profile = React.lazy(() => import('./pages/Profile'));
+const Page = React.lazy(() => import('./pages/Page'));
+const Kladers = React.lazy(() => import('./pages/Kladers'));
 const Notifications = React.lazy(() => import('./pages/Notifications'));
 const PublicationView = React.lazy(() => import('./pages/PublicationView'));
 
 const Settings = React.lazy(() => import('./pages/Settings'));
+const AddPage = React.lazy(() => import('./pages/CreatePage'));
 
 const theme = createTheme({
   palette: {
@@ -76,6 +79,14 @@ function App() {
             }
           />
           <Route
+            path="/search/:query"
+            element={
+              <React.Suspense>
+                <Home />
+              </React.Suspense>
+            }
+          />
+          <Route
             path="/notifications"
             element={
               <React.Suspense>
@@ -84,10 +95,26 @@ function App() {
             }
           />
           <Route
+            path="/kladers"
+            element={
+              <React.Suspense>
+                <Kladers />
+              </React.Suspense>
+            }
+          />
+          <Route
             path="/klader/:username"
             element={
               <React.Suspense>
                 <Profile />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/page/:username"
+            element={
+              <React.Suspense>
+                <Page />
               </React.Suspense>
             }
           />
@@ -106,6 +133,14 @@ function App() {
             element={
               <React.Suspense>
                 <Settings />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/page/create"
+            element={
+              <React.Suspense>
+                <AddPage />
               </React.Suspense>
             }
           />

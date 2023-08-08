@@ -4,18 +4,11 @@ import { gql, useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import ReactTimeAgo from 'react-time-ago';
 import Notification from '../../utils/Interfaces/Notification.interface';
+import { MARK_AS_SEEN } from '../../utils/GraphQL/Mutations';
 
 interface NotificationProps {
   notification: Notification;
 }
-
-const MARK_AS_SEEN = gql`
-  mutation MarkAsSeen($markAsSeenId: String) {
-    markAsSeen(id: $markAsSeenId) {
-      id
-    }
-  }
-`;
 
 function NotificationEntry({ notification }: NotificationProps) {
   const [markAsSeen] = useMutation(MARK_AS_SEEN);
@@ -37,7 +30,7 @@ function NotificationEntry({ notification }: NotificationProps) {
         markAsSeen({
           variables: { markAsSeenId: notification.id },
           onCompleted() {
-            navigate(notification.action);
+            navigate(notification.action, { preventScrollReset: false });
           },
         });
       }}

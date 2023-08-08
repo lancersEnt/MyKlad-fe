@@ -6,7 +6,8 @@ function NotFound() {
       <h1>Not found</h1>
       <nav>
         <li>
-          <Link to="/"> Back to home page </Link>
+          <Link
+                    preventScrollReset to="/"> Back to home page </Link>
         </li>
       </nav>
     </div>

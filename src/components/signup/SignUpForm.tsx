@@ -65,7 +65,7 @@ function SignUpForm(): ReactElement {
       .format('YYYY-MM-DD');
     formValues.dateOfBirth = new Date(date);
     await signup({
-      variables: { createUserInput: { ...formValues, permissions: ['user'] } },
+      variables: { createUserInput: { ...formValues } },
     });
   });
 

@@ -14,7 +14,7 @@ import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
 
 import CustomTextField from '../common/inputs/CustomTextField';
 
-const BorderLinearProgress = styled(LinearProgress)(() => ({
+export const BorderLinearProgress = styled(LinearProgress)(() => ({
   height: 10,
   borderRadius: 5,
 }));

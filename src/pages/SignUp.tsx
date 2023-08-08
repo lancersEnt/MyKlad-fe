@@ -50,7 +50,8 @@ function SignUp() {
             textAlign="center"
           >
             Vous avez déjà un compte?{' '}
-            <Link to="/signin">
+            <Link
+                    preventScrollReset to="/signin">
               <Typography
                 component="span"
                 fontSize="0.8rem"

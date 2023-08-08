@@ -45,7 +45,8 @@ function SignIn() {
             textAlign="center"
           >
             Vous n&apos;avez pas de compte?{' '}
-            <Link to="/signup">
+            <Link
+                    preventScrollReset to="/signup">
               <Typography
                 component="span"
                 fontSize="0.8rem"

@@ -7,7 +7,10 @@ export default interface Post {
   authorId: string;
   content: string;
   createdAt: string;
+  type: string;
   imageUrl: string;
+  videoUrl: string;
+  documentUrl: string;
   likersIds: string[];
   likers: User[];
   subscribers: User[];

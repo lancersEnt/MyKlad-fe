@@ -6,11 +6,12 @@ import Publication from '../../home/feed/Publication';
 import PostInput from '../../home/feed/PostInput';
 import Post from '../../../utils/Interfaces/Post.Interface';
 import { RootState } from '../../../app/store';
+import PublicationSkeleton from '../../common/skeletons/PublicationSkeleton';
 
 interface PublicationProps {
   posts: Post[];
 }
-function Publications({ posts }: PublicationProps) {
+function PagePublications({ posts }: PublicationProps) {
   const user = useSelector((state: RootState) => state.auth.user);
   const { username } = useParams();
   return (
@@ -22,4 +23,4 @@ function Publications({ posts }: PublicationProps) {
     </Box>
   );
 }
-export default Publications;
+export default PagePublications;

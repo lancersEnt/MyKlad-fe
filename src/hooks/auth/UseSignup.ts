@@ -1,14 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { gql, useMutation } from '@apollo/client';
-
-const SIGNUP = gql`
-  mutation signup($createUserInput: CreateUserInput!) {
-    signup(createUserInput: $createUserInput) {
-      id
-      email
-    }
-  }
-`;
+import { SIGNUP } from '../../utils/GraphQL/Mutations';
 
 export const UseSignup = (setSignedUp: any, reset: any) => {
   const [signup, { loading, error, data }] = useMutation(SIGNUP, {

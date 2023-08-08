@@ -16,8 +16,10 @@ interface User {
   address: string;
   nationality: string;
   profilePictureUrl: string;
+  permissions: string[];
   followers: User[];
   following: User[];
+  pages: User[];
 }
 
 interface AuthState {
@@ -39,8 +41,10 @@ const initialState: AuthState = {
     address: '',
     nationality: '',
     profilePictureUrl: '',
+    permissions: [],
     followers: [],
     following: [],
+    pages: [],
   },
 };
 

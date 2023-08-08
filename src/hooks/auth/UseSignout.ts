@@ -3,12 +3,7 @@ import { useDispatch } from 'react-redux';
 import { gql, useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../features/auth/authSlice';
-
-const SIGN_OUT = gql`
-  mutation Mutation {
-    logout
-  }
-`;
+import { SIGN_OUT } from '../../utils/GraphQL/Mutations';
 
 export const UseSignout = () => {
   const dispatch = useDispatch();
@@ -18,7 +13,7 @@ export const UseSignout = () => {
     onCompleted(res) {
       if (res.logout) {
         dispatch(logout());
-        navigate('/signin');
+        navigate('/signin', { preventScrollReset: false });
       }
     },
   });

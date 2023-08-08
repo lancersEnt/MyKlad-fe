@@ -88,7 +88,7 @@ function ProfileTabs({ user }: ProfileTabsProps) {
           <Tab
             icon={<PagesIcon />}
             iconPosition="start"
-            label="Mes Pages"
+            label="Pages"
             sx={{ marginRight: '1rem' }}
             {...a11yProps(3)}
           />

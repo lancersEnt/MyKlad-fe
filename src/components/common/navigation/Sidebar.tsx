@@ -19,7 +19,7 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import GroupsIcon from '@mui/icons-material/Groups';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -32,6 +32,12 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isActive = (path: string) => {
+    if (path === location.pathname) return true;
+    return false;
+  };
+
   return (
     <Drawer
       PaperProps={{
@@ -57,7 +63,7 @@ export default function Sidebar() {
           <ListItem
             key={1}
             sx={{
-              borderRight: '3px solid #305CE9',
+              borderRight: isActive('/') ? '3px solid #305CE9' : 'none',
               display: 'block',
               mb: '1.5rem',
             }}
@@ -65,13 +71,14 @@ export default function Sidebar() {
             <ListItemButton
               sx={{
                 borderRadius: '50%',
-                backgroundColor: '#E4EBF7',
+                backgroundColor: isActive('/') ? '#E4EBF7' : 'white',
                 height: 30,
                 width: 30,
                 justifyContent: 'center',
                 px: 3,
                 py: 3,
               }}
+              onClick={() => navigate('/', { preventScrollReset: false })}
             >
               <ListItemIcon
                 sx={{
@@ -79,23 +86,32 @@ export default function Sidebar() {
                   mr: 'auto',
                   justifyContent: 'center',
                 }}
-                onClick={() => navigate('/')}
               >
-                <HomeIcon color="primary" />
+                <HomeIcon color={isActive('/') ? 'primary' : 'secondary'} />
               </ListItemIcon>
             </ListItemButton>
           </ListItem>
-          <ListItem key={2} sx={{ display: 'block', mb: '1.5rem' }}>
+          <ListItem
+            key={2}
+            sx={{
+              borderRight: isActive('/kladers') ? '3px solid #305CE9' : 'none',
+              display: 'block',
+              mb: '1.5rem',
+            }}
+          >
             <ListItemButton
               sx={{
                 borderRadius: '50%',
-                backgroundColor: 'white',
+                backgroundColor: isActive('/kladers') ? '#E4EBF7' : 'white',
                 height: 30,
                 width: 30,
                 justifyContent: 'center',
                 px: 3,
                 py: 3,
               }}
+              onClick={() =>
+                navigate('/kladers', { preventScrollReset: false })
+              }
             >
               <ListItemIcon
                 sx={{
@@ -104,11 +120,13 @@ export default function Sidebar() {
                   justifyContent: 'center',
                 }}
               >
-                <PeopleOutlineIcon color="secondary" />
+                <PeopleOutlineIcon
+                  color={isActive('/klader') ? 'primary' : 'secondary'}
+                />
               </ListItemIcon>
             </ListItemButton>
           </ListItem>
-          <ListItem key={3} sx={{ display: 'block', mb: '1.5rem' }}>
+          {/* <ListItem key={3} sx={{ display: 'block', mb: '1.5rem' }}>
             <ListItemButton
               sx={{
                 borderRadius: '50%',
@@ -153,7 +171,7 @@ export default function Sidebar() {
                 <Diversity2Icon color="secondary" />
               </ListItemIcon>
             </ListItemButton>
-          </ListItem>
+          </ListItem> 
           <ListItem key={5} sx={{ display: 'block', mb: '1.5rem' }}>
             <ListItemButton
               sx={{
@@ -245,7 +263,7 @@ export default function Sidebar() {
                 <CalendarMonthIcon color="secondary" />
               </ListItemIcon>
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
         </List>
       </Box>
     </Drawer>

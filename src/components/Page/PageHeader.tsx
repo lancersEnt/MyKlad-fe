@@ -16,27 +16,27 @@ import ReplyIcon from '@mui/icons-material/Reply';
 
 import './header.css';
 import { Link } from 'react-router-dom';
+
 import { useSelector } from 'react-redux';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+import UserList from '../common/UserList';
 import User from '../../utils/Interfaces/User.interface';
 import { RootState } from '../../app/store';
 import isFollowing from '../../utils/isFollowing';
-import UserList from '../common/UserList';
 import { FOLLOW, UNFOLLOW } from '../../utils/GraphQL/Mutations';
 
-interface ProfileHeaderProps {
-  user: User;
+interface PageHeaderProps {
+  page: User;
   refetch: any;
 }
 
-function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
+function PageHeader({ page, refetch }: PageHeaderProps) {
   const authUser = useSelector((state: RootState) => state.auth.user);
+
   const [follow] = useMutation(FOLLOW);
   const [unfollow] = useMutation(UNFOLLOW);
+
   const [collapsed, setCollapsed] = useState(true);
-  const [following, setFollowing] = useState(
-    isFollowing(user.username, authUser.following)
-  );
 
   const [userListIsOpen, setUserListIsOpen] = useState(false);
   const [usersList, setUsersList]: any[] = useState([]);
@@ -46,12 +46,15 @@ function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
     setCollapsed(!collapsed);
   };
 
+  const [following, setFollowing] = useState(
+    isFollowing(page.username, authUser.following)
+  );
   const handleFollowButton = () => {
     if (!following) {
       follow({
         variables: {
           followInput: {
-            targetUserId: user.id,
+            targetUserId: page.id,
           },
         },
         onCompleted() {
@@ -64,7 +67,7 @@ function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
       unfollow({
         variables: {
           unfollowInput: {
-            targetUserId: user.id,
+            targetUserId: page.id,
           },
         },
         onCompleted() {
@@ -94,7 +97,7 @@ function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
               borderColor: '#335DE8',
             }}
             alt="avatar"
-            src={user.profilePictureUrl}
+            src=""
           />
         </Grid>
         <Grid item xs={12} md={9.5}>
@@ -133,15 +136,15 @@ function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
                   }}
                 >
                   <Link
-                    preventScrollReset
+                    preventScrollReset={false}
                     style={{ textDecoration: 'none', color: 'black' }}
                     to={
-                      user.permissions.includes('user')
-                        ? `/klader/${user.username}`
-                        : `/page/${user.username}`
+                      page.permissions.includes('user')
+                        ? `/klader/${page.username}`
+                        : `/page/${page.username}`
                     }
                   >
-                    {`${user.firstname} ${user.lastname}`}
+                    {`${page.firstname} ${page.lastname}`}
                   </Link>
                 </Typography>
                 <Typography
@@ -158,9 +161,7 @@ function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
                     },
                   }}
                 >
-                  {user.permissions.includes('expert')
-                    ? 'Kladeur expert'
-                    : 'Kladeur'}
+                  Page/Association/Entreprise
                 </Typography>
               </Stack>
             </Grid>
@@ -173,11 +174,7 @@ function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
               justifyContent="center"
               my=".5rem"
             >
-              <Stack
-                direction="row-reverse"
-                spacing={1}
-                display={user.id === authUser.id ? 'none' : 'flex'}
-              >
+              <Stack direction="row-reverse" spacing={1}>
                 <IconButton
                   sx={{
                     width: '45px',
@@ -215,7 +212,6 @@ function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
                   onClick={handleFollowButton}
                   variant={following ? 'outlined' : 'contained'}
                   sx={{ borderRadius: 25, px: '2rem' }}
-                  // disabled={following}
                 >
                   {following ? 'Abonné' : "s'abonné"}
                 </Button>
@@ -231,29 +227,29 @@ function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
             >
               <Stack direction="row" spacing={{ xs: 2, xl: 12 }}>
                 <Typography fontSize={{ xs: 13, xl: 14 }} gutterBottom>
-                  5 invesstissements
+                  5 Projets
                 </Typography>
                 <Typography
                   onClick={() => {
                     setUserListTitle('Abonnés');
-                    setUsersList(user.followers);
+                    setUsersList(page.followers);
                     setUserListIsOpen(true);
                   }}
                   fontSize={{ xs: 13, xl: 14 }}
                   gutterBottom
                 >
-                  {user.followers.length} Abonnés
+                  {page.followers.length} Abonnés
                 </Typography>
                 <Typography
                   onClick={() => {
                     setUserListTitle('Abbonnements');
-                    setUsersList(user.following);
+                    setUsersList(page.following);
                     setUserListIsOpen(true);
                   }}
                   fontSize={{ xs: 13, xl: 14 }}
                   gutterBottom
                 >
-                  {user.following.length} Abbonnements
+                  {page.following.length} Abbonnements
                 </Typography>
               </Stack>
             </Grid>
@@ -295,4 +291,4 @@ function ProfileHeader({ user, refetch }: ProfileHeaderProps) {
     </Box>
   );
 }
-export default ProfileHeader;
+export default PageHeader;

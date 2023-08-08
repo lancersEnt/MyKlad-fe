@@ -3,15 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material';
 import { gql, useMutation } from '@apollo/client';
 import { useEffect, useState } from 'react';
-
-const ACC_ACTIVATION = gql`
-  mutation activateAccount($activationToken: String!) {
-    activateUserAccount(activationToken: $activationToken) {
-      id
-      email
-    }
-  }
-`;
+import { ACC_ACTIVATION } from '../utils/GraphQL/Mutations';
 
 function AccountActivation() {
   const navigate = useNavigate();
@@ -30,7 +22,7 @@ function AccountActivation() {
       );
     }, 1000);
     setInterval(() => {
-      navigate('/signin');
+      navigate('/signin', { preventScrollReset: false });
     }, 5000);
   }, []);
   return (
@@ -89,9 +81,9 @@ function AccountActivation() {
               fontWeight={300}
             >
               Compte Activée, vous serez redirigé vers la page de connexion dans
-              5 secondes
+              5 secondes <br />
+              <CircularProgress variant="determinate" value={progress} />
             </Typography>
-            <CircularProgress variant="determinate" value={progress} />
           </Box>
           <Typography
             ml="auto"
@@ -102,7 +94,8 @@ function AccountActivation() {
             textAlign="center"
           >
             Vous avez déjà un compte?{' '}
-            <Link to="/signin">
+            <Link
+                    preventScrollReset={false} to="/signin">
               <Typography
                 component="span"
                 fontSize="0.8rem"

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable default-case */
 /* eslint-disable react/button-has-type */
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { ReactElement, useState, useRef } from 'react';
@@ -8,27 +10,19 @@ import {
   Avatar,
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
   IconButton,
   InputAdornment,
   Menu,
   Stack,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material';
 
 // Icons
 import PhotoIcon from '@mui/icons-material/Photo';
-import LinkIcon from '@mui/icons-material/Link';
-import NoteIcon from '@mui/icons-material/Note';
+import VideoIcon from '@mui/icons-material/VideoCameraBack';
 import EmojiIcon from '@mui/icons-material/EmojiEmotionsOutlined';
-import PublicIcon from '@mui/icons-material/Public';
-import ShowMoreIcon from '@mui/icons-material/ExpandMore';
+import PdfIcon from '@mui/icons-material/PictureAsPdf';
+
 // custom components
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -36,51 +30,98 @@ import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
 import { Close } from '@mui/icons-material';
 import CustomTextField from '../../common/inputs/CustomTextField';
 import { RootState } from '../../../app/store';
+import { CREATE_POST } from '../../../utils/GraphQL/Mutations';
 
 const uploader = Uploader({ apiKey: 'public_kW15bZn8U7vFK5hjt2GgJgDvGkLy' }); // Your real API key.
 
-const CREATE_POST = gql`
-  mutation ($createPostInput: CreatePostInput!) {
-    createPost(createPostInput: $createPostInput) {
-      id
-      content
-      authorId
-      createdAt
-      updatedAt
-      user {
-        id
-        firstname
-        username
-      }
-    }
-  }
-`;
-
 function PostInput(): ReactElement {
+  const [type, setType] = useState('text');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openEmojiMenu = Boolean(anchorEl);
   const [content, setContent] = useState('');
   const [imageURL, setImageURL] = useState('');
+  const [videoURL, setVideoURL] = useState('');
+  const [documentURL, setDocumentURL] = useState('');
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [createPost] = useMutation(CREATE_POST, {
     onCompleted() {
-      setImageURL('');
+      setType('text');
       setContent('');
+      setImageURL('');
+      setVideoURL('');
+      setDocumentURL('');
     },
   });
+  const youtubeRegex =
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 
   const handleCreatePost = async () => {
-    if (content.length > 3 || imageURL !== '')
-      await createPost({
-        variables: {
-          createPostInput: {
-            content,
-            imageUrl: imageURL,
-            authorId: '',
+    if (type === 'text' && content.length > 3) {
+      const matches = content.match(youtubeRegex);
+      if (matches) {
+        setType('video');
+        setVideoURL(matches[0]);
+        await createPost({
+          variables: {
+            createPostInput: {
+              content: content.replace(matches[0], ''),
+              type: 'video',
+              videoUrl: matches[0],
+              authorId: '',
+            },
           },
-        },
-      });
+        });
+      } else
+        await createPost({
+          variables: {
+            createPostInput: {
+              content,
+              type,
+              authorId: '',
+            },
+          },
+        });
+    } else if (content.length > 3 || imageURL !== '' || videoURL !== '') {
+      switch (type) {
+        case 'image':
+          await createPost({
+            variables: {
+              createPostInput: {
+                content,
+                type,
+                imageUrl: imageURL,
+                authorId: '',
+              },
+            },
+          });
+          break;
+        case 'video':
+          await createPost({
+            variables: {
+              createPostInput: {
+                content,
+                type,
+                videoUrl: videoURL,
+                authorId: '',
+              },
+            },
+          });
+          break;
+        case 'document':
+          await createPost({
+            variables: {
+              createPostInput: {
+                content,
+                type,
+                documentUrl: documentURL,
+                authorId: '',
+              },
+            },
+          });
+          break;
+      }
+    }
   };
 
   const handleEmoji = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -104,6 +145,7 @@ function PostInput(): ReactElement {
         borderRadius: 3,
         boxShadow: 1,
       }}
+      id="post-input"
     >
       <Stack
         direction="row"
@@ -119,8 +161,13 @@ function PostInput(): ReactElement {
           textTransform="capitalize"
         >
           <Link
+                    preventScrollReset
             style={{ textDecoration: 'none', color: 'black' }}
-            to={`/klader/${user.username}`}
+            to={
+              user.permissions.includes('user')
+                ? `/klader/${user.username}`
+                : `/page/${user.username}`
+            }
           >
             {`${user.firstname} ${user.lastname}`}
           </Link>
@@ -128,7 +175,7 @@ function PostInput(): ReactElement {
       </Stack>
       <Box>
         <CustomTextField
-          placeholder="Ecrivez un commentaire ... "
+          placeholder="Quoi de neuf ?"
           multiline
           fullWidth
           autoFocus
@@ -179,35 +226,77 @@ function PostInput(): ReactElement {
           />
         </Menu>
         <Stack direction="row" spacing={2} justifyContent="space-between">
-          <UploadButton
-            uploader={uploader}
-            options={{
-              showRemoveButton: true,
-              multi: false,
-              mimeTypes: ['image/jpeg'],
-              // to use on profile picture
-              // editor: {
-              //   images: {
-              //     crop: true,
-              //     cropRatio: 1,
-              //     cropShape: 'circ',
-              //     preview: true,
-              //   },
-              // },
-            }}
-            onComplete={(files) => setImageURL(files[0].fileUrl)}
-          >
-            {({ onClick }) => (
-              <IconButton
-                sx={{
-                  backgroundColor: '#F5F6F9',
-                }}
-                onClick={onClick}
-              >
-                <PhotoIcon />
-              </IconButton>
-            )}
-          </UploadButton>
+          <Stack direction="row" spacing={1}>
+            <UploadButton
+              uploader={uploader}
+              options={{
+                showRemoveButton: true,
+                multi: false,
+                mimeTypes: ['image/jpeg'],
+              }}
+              onComplete={(files) => {
+                setType('image');
+                setImageURL(files[0].fileUrl);
+              }}
+            >
+              {({ onClick }) => (
+                <IconButton
+                  sx={{
+                    backgroundColor: '#F5F6F9',
+                  }}
+                  onClick={onClick}
+                >
+                  <PhotoIcon />
+                </IconButton>
+              )}
+            </UploadButton>
+            <UploadButton
+              uploader={uploader}
+              options={{
+                showRemoveButton: true,
+                multi: false,
+                mimeTypes: ['video/mp4'],
+              }}
+              onComplete={(files) => {
+                setType('video');
+                setVideoURL(files[0].fileUrl);
+              }}
+            >
+              {({ onClick }) => (
+                <IconButton
+                  sx={{
+                    backgroundColor: '#F5F6F9',
+                  }}
+                  onClick={onClick}
+                >
+                  <VideoIcon />
+                </IconButton>
+              )}
+            </UploadButton>
+            <UploadButton
+              uploader={uploader}
+              options={{
+                showRemoveButton: true,
+                multi: false,
+                mimeTypes: ['application/pdf'],
+              }}
+              onComplete={(files) => {
+                setType('video');
+                setVideoURL(files[0].fileUrl);
+              }}
+            >
+              {({ onClick }) => (
+                <IconButton
+                  sx={{
+                    backgroundColor: '#F5F6F9',
+                  }}
+                  onClick={onClick}
+                >
+                  <PdfIcon />
+                </IconButton>
+              )}
+            </UploadButton>
+          </Stack>
           <Button
             sx={{ borderRadius: 25 }}
             variant="contained"

@@ -2,52 +2,8 @@ import { gql, useQuery } from '@apollo/client';
 import { Box, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import Publication from '../components/home/feed/Publication';
+import { GET_POST } from '../utils/GraphQL/Queries';
 
-const GET_POST = gql`
-  query Post($postId: String!) {
-    post(id: $postId) {
-      id
-      authorId
-      content
-      createdAt
-      imageUrl
-      likersIds
-      likers {
-        id
-        firstname
-        lastname
-        username
-        profilePictureUrl
-      }
-      comments {
-        id
-        content
-        likersIds
-        likers {
-          id
-          firstname
-          lastname
-          username
-          profilePictureUrl
-        }
-        user {
-          id
-          firstname
-          lastname
-          username
-          profilePictureUrl
-        }
-      }
-      user {
-        id
-        firstname
-        lastname
-        username
-        profilePictureUrl
-      }
-    }
-  }
-`;
 function PublicationView() {
   const { postId } = useParams();
   const {

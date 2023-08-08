@@ -11,8 +11,8 @@ function Home() {
         spacing={10}
         sx={{ pl: { xs: 0, sm: 0, md: '5rem' }, pt: '5rem' }}
       >
-        <Grid item xs={12} sm={12} lg={7}>
-          <Stories />
+        <Grid item xs={12} sm={12} lg={12}>
+          {/* <Stories /> */}
           <Feed />
         </Grid>
         <Grid
@@ -22,7 +22,7 @@ function Home() {
           lg={5}
           display={{ xs: 'none', sm: 'none', lg: 'block' }}
         >
-          <Events />
+          {/* <Events /> */}
         </Grid>
       </Grid>
     </Box>

@@ -1,12 +1,10 @@
+import { useEffect } from 'react';
 import { Box, Grid } from '@mui/material';
 import { useQuery, useSubscription } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 
-import { useEffect } from 'react';
-import ProfileHeader from '../components/profile/ProfileHeader';
-import ProfileTabs from '../components/profile/ProfileTabs';
-
-import { GET_USER } from '../utils/GraphQL/Queries';
+import PageHeader from '../components/Page/PageHeader';
+import PageTabs from '../components/Page/PageTabs';
 
 import {
   POST_LIKE_SUBSCRIPTION,
@@ -14,14 +12,16 @@ import {
   POST_UNLIKE_SUBSCRIPTION,
 } from '../utils/GraphQL/Subscriptions';
 
-function Profile() {
+import { GET_PAGE } from '../utils/GraphQL/Queries';
+
+function Page() {
   const { username } = useParams();
   const {
-    data: user,
+    data: page,
     loading,
     error,
     refetch,
-  } = useQuery(GET_USER, {
+  } = useQuery(GET_PAGE, {
     variables: { username },
   });
 
@@ -44,20 +44,24 @@ function Profile() {
     <Box mb="5rem">
       {loading && 'loading ... '}
       {!loading && error && <h4>{error.message}</h4>}
-      {!loading && user && (
+      {!loading && page && (
         <Grid
           container
           spacing={2}
           sx={{ pl: { xs: 0, sm: 0, md: '5rem' }, pt: '5rem' }}
         >
-          <Grid item lg={2} display={{ xs: 'none', sm: 'none', lg: 'flex' }} />
-          <Grid item xs={12} sm={12} lg={8}>
-            <ProfileHeader user={user.findByUsername} refetch={refetch} />
-            <ProfileTabs user={user.findByUsername} />
+          <Grid
+            item
+            lg={0.5}
+            display={{ xs: 'none', sm: 'none', lg: 'flex' }}
+          />
+          <Grid item xs={12} sm={12} lg={10.5}>
+            <PageHeader page={page.findPageByUsername} refetch={refetch} />
+            <PageTabs page={page.findPageByUsername} />
           </Grid>
         </Grid>
       )}
     </Box>
   );
 }
-export default Profile;
+export default Page;

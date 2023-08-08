@@ -33,12 +33,11 @@ type FormValues = {
 
 function SigninForm(): ReactElement {
   const formSchema = Yup.object().shape({
-    email: Yup.string()
-      .required('email is required')
-      .matches(
-        /^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$/i,
-        'enter a valid email please'
-      ),
+    email: Yup.string().required('email is required'),
+    // .matches(
+    //   /^[\w\-.]+@([\w-]+\.)+[\w-]{2,}$/i,
+    //   'enter a valid email please'
+    // ),
     password: Yup.string().required('Password is required'),
   });
   const formOptions = { resolver: yupResolver(formSchema) };
@@ -52,6 +51,20 @@ function SigninForm(): ReactElement {
   const { signin, loading, error, data } = UseSignin();
 
   const onSubmit = handleSubmit(async (formValues) => {
+    if (
+      !formValues.email.match(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+      )
+    ) {
+      await signin({
+        variables: {
+          user: { username: formValues.email, password: formValues.password },
+        },
+      });
+    }
+
+    // if (!formValues.email.match('/^[w-.]+@([w-]+.)+[w-]{2,}$/i')) {
+    // }
     await signin({ variables: { user: formValues } });
   });
 
@@ -145,7 +158,11 @@ function SigninForm(): ReactElement {
             sx={{ marginTop: '.25rem !important' }}
           >
             {' '}
-            <Link to="/forgot" style={{ textDecoration: 'none' }}>
+            <Link
+              preventScrollReset
+              to="/forgot"
+              style={{ textDecoration: 'none' }}
+            >
               {' '}
               Mot de passe oublié ?
             </Link>

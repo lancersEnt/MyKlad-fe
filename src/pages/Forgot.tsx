@@ -46,7 +46,8 @@ function Forgot() {
             textAlign="center"
           >
             Vous avez retrouvé votre mot de passe?{' '}
-            <Link to="/signin">
+            <Link
+                    preventScrollReset={false} to="/signin">
               <Typography
                 component="span"
                 fontSize="0.8rem"

@@ -10,28 +10,7 @@ import {
 import { gql, useQuery } from '@apollo/client';
 import Notification from '../utils/Interfaces/Notification.interface';
 import NotificationEntry from '../components/notifications/Notification';
-
-const GET_NOTIFICATIONS = gql`
-  query Notification {
-    userNotifications {
-      id
-      title
-      body
-      action
-      createdBy
-      targetUserId
-      seen
-      createdAt
-      user {
-        id
-        username
-        firstname
-        lastname
-        profilePictureUrl
-      }
-    }
-  }
-`;
+import { GET_NOTIFICATIONS } from '../utils/GraphQL/Queries';
 
 function Notifications() {
   const {
