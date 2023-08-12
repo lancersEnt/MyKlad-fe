@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/button-has-type */
@@ -39,12 +40,12 @@ const uploader = Uploader({ apiKey: 'public_kW15bZn8U7vFK5hjt2GgJgDvGkLy' }); //
 
 type FormValues = {
   firstname: string;
-  lastname: string;
-  dateOfBirth: Date;
-  city: string;
-  nationality: string;
-  address: string;
-  phone: string;
+  lastname: string | undefined;
+  dateOfBirth: Date | undefined;
+  city: string | undefined;
+  nationality: string | undefined;
+  address: string | undefined;
+  phone: string | undefined;
 };
 
 const actions = [
@@ -72,12 +73,12 @@ function GeneralTab(): ReactElement {
 
   const formSchema = Yup.object().shape({
     firstname: Yup.string().required('champ prenom est obligatoire'),
-    lastname: Yup.string().required('champ nom est obligatoire'),
-    dateOfBirth: Yup.date().required('champ date est obligatoire'),
-    city: Yup.string().required('champ ville est obligatoire'),
-    nationality: Yup.string().required('champ nationalité est obligatoire'),
-    address: Yup.string().required('champ adresse est obligatoire'),
-    phone: Yup.string().required('champ telephone est obligatoire'),
+    lastname: Yup.string().optional(),
+    dateOfBirth: Yup.date().optional(),
+    city: Yup.string().optional(),
+    nationality: Yup.string().optional(),
+    address: Yup.string().optional(),
+    phone: Yup.string().optional(),
   });
 
   const formOptions = { resolver: yupResolver(formSchema) };
@@ -89,11 +90,21 @@ function GeneralTab(): ReactElement {
     formState: { errors, isDirty },
   } = useForm<FormValues>(formOptions);
 
+  function removeEmptyFields<T>(obj: T): T {
+    for (const key in obj) {
+      if (obj[key] === null || obj[key] === undefined || obj[key] === '') {
+        delete obj[key];
+      }
+    }
+    return obj;
+  }
+
   const onSubmit = handleSubmit(async (formValues) => {
     const date = moment
-      .utc(formValues.dateOfBirth.toLocaleString())
+      .utc(formValues.dateOfBirth?.toLocaleString())
       .format('YYYY-MM-DD');
     formValues.dateOfBirth = new Date(date);
+    removeEmptyFields(formValues);
     updateUser({
       variables: {
         updateUserId: user.id,
@@ -300,7 +311,7 @@ function GeneralTab(): ReactElement {
               options={{
                 showRemoveButton: true,
                 multi: false,
-                mimeTypes: ['image/jpeg'],
+                mimeTypes: ['image/jpeg', 'image/png'],
                 editor: {
                   images: {
                     crop: true,

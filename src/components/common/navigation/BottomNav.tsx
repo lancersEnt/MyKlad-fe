@@ -47,12 +47,17 @@ export default function BottomNav() {
         onClick={() => navigate('/kladers', { preventScrollReset: false })}
         icon={<PeopleOutlineIcon />}
       />
-      {/* <BottomNavigationAction
-        label="Investissement"
+      <BottomNavigationAction
+        label="Klads"
         value="invests"
         icon={<BusinessCenterIcon />}
       />
       <BottomNavigationAction
+        label="favoris"
+        value="Saved"
+        icon={<BookmarkIcon />}
+      />
+      {/* <BottomNavigationAction
         label="Connections"
         value="connections"
         icon={<Diversity2Icon />}
@@ -61,11 +66,6 @@ export default function BottomNav() {
         label="Brevets"
         value="Brevets"
         icon={<VerifiedIcon />}
-      />
-      <BottomNavigationAction
-        label="Saved"
-        value="Saved"
-        icon={<BookmarkIcon />}
       />
       <BottomNavigationAction
         label="Groups"

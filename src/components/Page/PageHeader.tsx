@@ -14,7 +14,6 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import MailIcon from '@mui/icons-material/Mail';
 import ReplyIcon from '@mui/icons-material/Reply';
 
-import './header.css';
 import { Link } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
@@ -97,7 +96,7 @@ function PageHeader({ page, refetch }: PageHeaderProps) {
               borderColor: '#335DE8',
             }}
             alt="avatar"
-            src=""
+            src={page.profilePictureUrl}
           />
         </Grid>
         <Grid item xs={12} md={9.5}>
@@ -254,32 +253,6 @@ function PageHeader({ page, refetch }: PageHeaderProps) {
               </Stack>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography
-            className={collapsed ? 'collapsed text' : 'text'}
-            px={{ lg: '5rem' }}
-            align="center"
-          >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eget
-            erat molestie sapien rutrum dignissim. In mollis eget elit vel
-            condimentum. Cras commodo cursus arcu, eget dictum sapien vehicula
-            non. Donec tristique eleifend quam, vel consequat nunc hendrerit a.
-            Integer porta augue eu ex dignissim hendrerit non nec felis. Donec
-            metus odio, semper ac tincidunt at, congue dignissim eros. Sed
-            ligula felis, dignissim non arcu sit amet, gravida ornare leo. Sed
-            vel turpis eget mauris finibus tristique. Donec non mollis nisl. In
-            aliquam, felis ac facilisis sollicitudin, nulla purus maximus velit,
-            et molestie velit quam id libero. Phasellus vulputate diam eu
-            feugiat imperdiet. Etiam mi elit, malesuada sed euismod in, pretium
-            eu diam. Praesent porttitor a dui ac bibendum. Vestibulum lobortis
-            augue a augue tristique placerat.
-          </Typography>
-          <Typography color="primary" align="center" sx={{ cursor: 'pointer' }}>
-            <Button onClick={handleCollapse}>
-              {collapsed ? 'Voir plus' : 'Voir moin'}
-            </Button>
-          </Typography>
         </Grid>
       </Grid>
       <UserList

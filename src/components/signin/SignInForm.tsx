@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 
 import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { ReactComponent as Google } from '../../assets/social logos/google.svg';
 import { ReactComponent as Facebook } from '../../assets/social logos/facebook.svg';
@@ -32,6 +32,7 @@ type FormValues = {
 };
 
 function SigninForm(): ReactElement {
+  const navigate = useNavigate();
   const formSchema = Yup.object().shape({
     email: Yup.string().required('email is required'),
     // .matches(
@@ -60,12 +61,18 @@ function SigninForm(): ReactElement {
         variables: {
           user: { username: formValues.email, password: formValues.password },
         },
+        onCompleted() {
+          navigate(0);
+        },
       });
     }
 
-    // if (!formValues.email.match('/^[w-.]+@([w-]+.)+[w-]{2,}$/i')) {
-    // }
-    await signin({ variables: { user: formValues } });
+    await signin({
+      variables: { user: formValues },
+      onCompleted() {
+        navigate(0);
+      },
+    });
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -88,7 +95,7 @@ function SigninForm(): ReactElement {
         maxWidth: '400px',
       }}
     >
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} action="/">
         <Stack spacing={2}>
           <Typography mx="auto" variant="h5" fontWeight={500}>
             Identifiez-vous

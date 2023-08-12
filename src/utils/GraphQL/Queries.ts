@@ -511,3 +511,16 @@ export const GET_NOTIFICATIONS = gql`
     }
   }
 `;
+
+export const GET_CATEGORIES = gql`
+  query Query {
+    categories {
+      id
+      name
+      subCategories {
+        id
+        name
+      }
+    }
+  }
+`;

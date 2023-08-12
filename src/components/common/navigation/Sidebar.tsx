@@ -121,22 +121,30 @@ export default function Sidebar() {
                 }}
               >
                 <PeopleOutlineIcon
-                  color={isActive('/klader') ? 'primary' : 'secondary'}
+                  color={isActive('/kladers') ? 'primary' : 'secondary'}
                 />
               </ListItemIcon>
             </ListItemButton>
           </ListItem>
-          {/* <ListItem key={3} sx={{ display: 'block', mb: '1.5rem' }}>
+          <ListItem
+            key={3}
+            sx={{
+              borderRight: isActive('/klads') ? '3px solid #305CE9' : 'none',
+              display: 'block',
+              mb: '1.5rem',
+            }}
+          >
             <ListItemButton
               sx={{
                 borderRadius: '50%',
-                backgroundColor: 'white',
+                backgroundColor: isActive('/klads') ? '#E4EBF7' : 'white',
                 height: 30,
                 width: 30,
                 justifyContent: 'center',
                 px: 3,
                 py: 3,
               }}
+              onClick={() => navigate('/klads', { preventScrollReset: false })}
             >
               <ListItemIcon
                 sx={{
@@ -145,11 +153,13 @@ export default function Sidebar() {
                   justifyContent: 'center',
                 }}
               >
-                <BusinessCenterIcon color="secondary" />
+                <BusinessCenterIcon
+                  color={isActive('/klads') ? 'primary' : 'secondary'}
+                />
               </ListItemIcon>
             </ListItemButton>
           </ListItem>
-          <ListItem key={4} sx={{ display: 'block', mb: '1.5rem' }}>
+          {/* <ListItem key={4} sx={{ display: 'block', mb: '1.5rem' }}>
             <ListItemButton
               sx={{
                 borderRadius: '50%',

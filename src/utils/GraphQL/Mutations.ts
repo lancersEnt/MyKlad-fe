@@ -196,8 +196,8 @@ export const ACC_ACTIVATION = gql`
 `;
 
 export const ADD_PAGE = gql`
-  mutation Mutation($createUserInput: CreateUserInput!, $ownerId: String) {
-    createPage(createUserInput: $createUserInput, ownerId: $ownerId) {
+  mutation Mutation($createUserInput: CreateUserInput!) {
+    createPage(createUserInput: $createUserInput) {
       firstname
       email
       phone
@@ -223,5 +223,13 @@ export const SWITCH_ACCOUNT = gql`
 export const SWITCH_BACK = gql`
   mutation Mutation {
     switchBack
+  }
+`;
+
+export const CREATE_KLAD = gql`
+  mutation CreateKlad($createKladInput: CreateKladInput!) {
+    createKlad(createKladInput: $createKladInput) {
+      id
+    }
   }
 `;

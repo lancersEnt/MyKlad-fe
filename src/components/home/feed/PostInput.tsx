@@ -161,7 +161,7 @@ function PostInput(): ReactElement {
           textTransform="capitalize"
         >
           <Link
-                    preventScrollReset
+            preventScrollReset
             style={{ textDecoration: 'none', color: 'black' }}
             to={
               user.permissions.includes('user')
@@ -232,7 +232,7 @@ function PostInput(): ReactElement {
               options={{
                 showRemoveButton: true,
                 multi: false,
-                mimeTypes: ['image/jpeg'],
+                mimeTypes: ['image/jpeg', 'image/png'],
               }}
               onComplete={(files) => {
                 setType('image');

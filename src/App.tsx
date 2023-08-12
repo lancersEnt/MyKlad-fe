@@ -23,11 +23,11 @@ const Home = React.lazy(() => import('./pages/Home'));
 const Profile = React.lazy(() => import('./pages/Profile'));
 const Page = React.lazy(() => import('./pages/Page'));
 const Kladers = React.lazy(() => import('./pages/Kladers'));
+const Klads = React.lazy(() => import('./pages/Klads'));
 const Notifications = React.lazy(() => import('./pages/Notifications'));
 const PublicationView = React.lazy(() => import('./pages/PublicationView'));
 
 const Settings = React.lazy(() => import('./pages/Settings'));
-const AddPage = React.lazy(() => import('./pages/CreatePage'));
 
 const theme = createTheme({
   palette: {
@@ -119,6 +119,14 @@ function App() {
             }
           />
           <Route
+            path="/klads"
+            element={
+              <React.Suspense>
+                <Klads />
+              </React.Suspense>
+            }
+          />
+          <Route
             path="/publication/:postId"
             element={
               <React.Suspense>
@@ -133,14 +141,6 @@ function App() {
             element={
               <React.Suspense>
                 <Settings />
-              </React.Suspense>
-            }
-          />
-          <Route
-            path="/page/create"
-            element={
-              <React.Suspense>
-                <AddPage />
               </React.Suspense>
             }
           />

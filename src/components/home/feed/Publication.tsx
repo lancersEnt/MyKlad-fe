@@ -171,62 +171,43 @@ function Publication({ post }: PublicationProps) {
   };
 
   useEffect(() => {
+    console.log(subData?.commentCreated?.newComment);
+    console.log(commentsF);
+
     if (
       (subData?.commentCreated?.newComment &&
         subData?.commentCreated?.newComment.postId === post.id) ||
       (commentLikeSubData?.commentLiked?.comment &&
         commentLikeSubData?.commentLiked?.comment.postId === post.id) ||
       (commentUnlikeSubData?.commentUnliked?.comment &&
-        commentUnlikeSubData?.commentUnliked?.comment.postId === post.id)
+        commentUnlikeSubData?.commentUnliked?.comment.postId === post.id) ||
+      (likeSubData?.postLiked?.post &&
+        likeSubData?.postLiked?.post.id === post.id) ||
+      (unlikeSubData?.postUnliked?.post &&
+        unlikeSubData?.postUnliked?.post.id === post.id)
     ) {
-      if (commentsF) {
+      if (commentsF || likersF) {
         refetchPost();
       } else
         fetchPost({
           onCompleted(res) {
+            setLikers(res.post.likers);
+            setLikersIds(res.post.likersIds);
             setComments(res.post.comments);
+            setLikersF(true);
             setCommentsF(true);
           },
         });
     }
 
-    if (
-      likeSubData?.postLiked?.post &&
-      likeSubData?.postLiked?.post.id === post.id
-    ) {
-      if (likersF) refetchPost();
-      else
-        fetchPost({
-          onCompleted(res) {
-            setLikers(res.post.likers);
-            setLikersIds(res.post.likersIds);
-            setLikersF(true);
-          },
-        });
-    }
-
-    if (
-      unlikeSubData?.postUnliked?.post &&
-      unlikeSubData?.postUnliked?.post.id === post.id
-    ) {
-      if (likersF) refetchPost();
-      else
-        fetchPost({
-          onCompleted(res) {
-            setLikers(res.post.likers);
-            setLikersIds(res.post.likersIds);
-            setLikersF(true);
-          },
-        });
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     // postComments,
     subData,
     commentLikeSubData,
+    commentUnlikeSubData,
     likeSubData,
     unlikeSubData,
-    commentUnlikeSubData,
     post.id,
   ]);
 
@@ -250,7 +231,7 @@ function Publication({ post }: PublicationProps) {
             <Stack justifyContent="center" pr={2}>
               <Typography fontWeight={700} textTransform="capitalize">
                 <Link
-                    preventScrollReset
+                  preventScrollReset
                   style={{ textDecoration: 'none', color: 'black' }}
                   to={
                     post.user.permissions.includes('user')
@@ -263,7 +244,7 @@ function Publication({ post }: PublicationProps) {
               </Typography>
               <Typography fontSize={12} textTransform="unset">
                 <Link
-                    preventScrollReset
+                  preventScrollReset
                   style={{ textDecoration: 'underline', color: 'gray' }}
                   to={`/publication/${post.id}`}
                 >{`${dateToNormalFormat(post.createdAt)}`}</Link>

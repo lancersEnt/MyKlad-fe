@@ -40,12 +40,10 @@ import {
   FileCopyOutlined,
   LogoutOutlined,
   LoopRounded,
-  PersonOutline,
   SettingsBackupRestoreOutlined,
   SettingsOutlined,
   StarBorderOutlined,
   SupervisorAccountOutlined,
-  VerifiedUserOutlined,
 } from '@mui/icons-material';
 import { RootState } from '../../../app/store';
 import { UseSignout } from '../../../hooks/auth/UseSignout';
@@ -62,6 +60,8 @@ import {
   UNSEEN_NOTIFICATIONS_COUNT,
 } from '../../../utils/GraphQL/Queries';
 import { NOTIFICATION_SUBSCRIPTION } from '../../../utils/GraphQL/Subscriptions';
+import CreatePage from '../../modals/CreatePage';
+import CreateKlad from '../../modals/CreateKlad';
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -100,6 +100,26 @@ export default function Navbar() {
 
   const { signout } = UseSignout();
 
+  const [createPage, setCreatePage] = useState(false);
+
+  const OpenCreatePage = () => {
+    setCreatePage(true);
+  };
+
+  const CloseCreatePage = () => {
+    setCreatePage(false);
+  };
+
+  const [createKlad, setCreateKlad] = useState(false);
+
+  const OpenCreateKlad = () => {
+    setCreateKlad(true);
+  };
+
+  const CloseCreateKlad = () => {
+    setCreateKlad(false);
+  };
+
   const { data: unseenNotificationsCount, refetch: refetchUnseen } = useQuery(
     UNSEEN_NOTIFICATIONS_COUNT
   );
@@ -132,10 +152,8 @@ export default function Navbar() {
       );
     if (destination === 'settings')
       navigate(`/settings`, { preventScrollReset: false });
-    if (destination === 'addPage')
-      navigate(`/page/create`, { preventScrollReset: false });
-    if (destination === 'addKlad')
-      navigate(`/settings`, { preventScrollReset: false });
+    if (destination === 'addPage') OpenCreatePage();
+    if (destination === 'addKlad') OpenCreateKlad();
     if (destination === 'switchBack')
       await switchBack({
         onCompleted() {
@@ -477,7 +495,9 @@ export default function Navbar() {
                               >
                                 <Stack direction="row" spacing={1}>
                                   <SupervisorAccountOutlined />
-                                  <Typography>Devenir expert</Typography>
+                                  <Typography display={{ xs: 'none' }}>
+                                    Devenir expert
+                                  </Typography>
                                 </Stack>
                               </MenuItem>
                             </Stack>
@@ -612,7 +632,7 @@ export default function Navbar() {
                       >
                         <Stack spacing={1} direction="row">
                           <SettingsOutlined />
-                          <Typography textAlign="center">Settings</Typography>
+                          <Typography textAlign="center">Parametres</Typography>
                         </Stack>
                       </MenuItem>
                       <MenuItem
@@ -621,7 +641,9 @@ export default function Navbar() {
                       >
                         <Stack spacing={1} direction="row">
                           <LogoutOutlined />
-                          <Typography textAlign="center">Logout</Typography>
+                          <Typography textAlign="center">
+                            Se deconnecter
+                          </Typography>
                         </Stack>
                       </MenuItem>
                     </Stack>
@@ -680,6 +702,8 @@ export default function Navbar() {
           </Box>
         </Box>
       </Drawer>
+      <CreatePage open={createPage} handleClose={CloseCreatePage} />
+      <CreateKlad open={createKlad} handleClose={CloseCreateKlad} />
     </AppBar>
   );
 }
