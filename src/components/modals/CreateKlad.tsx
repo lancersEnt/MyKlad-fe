@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -8,7 +9,6 @@ import {
   Box,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
@@ -23,11 +23,10 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { useMutation, useQuery } from '@apollo/client';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import CustomTextField from '../common/inputs/CustomTextField';
-import { ADD_PAGE, CREATE_KLAD } from '../../utils/GraphQL/Mutations';
+import { CREATE_KLAD } from '../../utils/GraphQL/Mutations';
 import { GET_CATEGORIES } from '../../utils/GraphQL/Queries';
 import CustomSelectField from '../common/inputs/CustomSelectField';
 
@@ -51,7 +50,6 @@ function CreateKlad({ open, handleClose }: CreateKladProps) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(20);
   const formSchema = Yup.object().shape({
     name: Yup.string().required('champ nom est obligatoire'),
     description: Yup.string().required('champ description est obligatoire'),
@@ -71,29 +69,18 @@ function CreateKlad({ open, handleClose }: CreateKladProps) {
   const [subCategories, setSubCategories] = useState([]);
 
   const formOptions = { resolver: yupResolver(formSchema) };
-  const [signedUp, setSignedUp] = useState(false);
   const { data: categories, loading, error } = useQuery(GET_CATEGORIES);
   const {
     register,
-    reset,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<FormValues>(formOptions);
-  const watchedFields = watch(['categoryId']); // Watch specific fields
   const handleValueChange = (field: any) => (value: any) => {
-    console.log(`Value of ${field}:`, value);
-
     const cat: any = categories.categories.filter(
       (cat: any) => cat.id === value.target.value
     );
-
-    console.log(cat[0]);
-
     setCategory(cat[0]);
     setSubCategories(cat[0].subCategories);
-
-    // Perform your desired action here
   };
   const [addKlad] = useMutation(CREATE_KLAD, {
     onCompleted() {

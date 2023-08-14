@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState } from 'react';
 
 import {
   Box,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   Stack,
@@ -17,7 +16,6 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { useMutation } from '@apollo/client';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import CustomTextField from '../common/inputs/CustomTextField';
@@ -38,7 +36,6 @@ function CreatePage({ open, handleClose }: CreatePageProps) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(20);
   const formSchema = Yup.object().shape({
     firstname: Yup.string().required('champ prenom est obligatoire'),
     username: Yup.string().required("champ nom d'utilisateur est obligatoire"),
@@ -47,11 +44,9 @@ function CreatePage({ open, handleClose }: CreatePageProps) {
   });
 
   const formOptions = { resolver: yupResolver(formSchema) };
-  const [signedUp, setSignedUp] = useState(false);
 
   const {
     register,
-    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>(formOptions);
