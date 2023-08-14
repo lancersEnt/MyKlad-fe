@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Avatar,
   Box,
@@ -5,7 +6,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Divider,
   IconButton,
@@ -14,7 +14,6 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface UserListProps {

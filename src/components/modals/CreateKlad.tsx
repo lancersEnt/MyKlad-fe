@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable no-param-reassign */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState } from 'react';
 
@@ -8,6 +11,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
   Stack,
   Typography,
   useMediaQuery,
@@ -23,6 +29,7 @@ import { useNavigate } from 'react-router-dom';
 import CustomTextField from '../common/inputs/CustomTextField';
 import { ADD_PAGE, CREATE_KLAD } from '../../utils/GraphQL/Mutations';
 import { GET_CATEGORIES } from '../../utils/GraphQL/Queries';
+import CustomSelectField from '../common/inputs/CustomSelectField';
 
 interface CreateKladProps {
   open: boolean;
@@ -60,6 +67,9 @@ function CreateKlad({ open, handleClose }: CreateKladProps) {
     budgetNeeded: Yup.number().required('Champ budget est obligatoire'),
   });
 
+  const [category, setCategory] = useState();
+  const [subCategories, setSubCategories] = useState([]);
+
   const formOptions = { resolver: yupResolver(formSchema) };
   const [signedUp, setSignedUp] = useState(false);
   const { data: categories, loading, error } = useQuery(GET_CATEGORIES);
@@ -67,9 +77,24 @@ function CreateKlad({ open, handleClose }: CreateKladProps) {
     register,
     reset,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormValues>(formOptions);
+  const watchedFields = watch(['categoryId']); // Watch specific fields
+  const handleValueChange = (field: any) => (value: any) => {
+    console.log(`Value of ${field}:`, value);
 
+    const cat: any = categories.categories.filter(
+      (cat: any) => cat.id === value.target.value
+    );
+
+    console.log(cat[0]);
+
+    setCategory(cat[0]);
+    setSubCategories(cat[0].subCategories);
+
+    // Perform your desired action here
+  };
   const [addKlad] = useMutation(CREATE_KLAD, {
     onCompleted() {
       navigate(0);
@@ -95,12 +120,7 @@ function CreateKlad({ open, handleClose }: CreateKladProps) {
     >
       <form onSubmit={onSubmit}>
         <DialogTitle id="responsive-dialog-title">
-          <Typography
-            textAlign="center"
-            gutterBottom
-            variant="h5"
-            fontWeight={500}
-          >
+          <Typography textAlign="center" gutterBottom fontWeight={500}>
             Créer un Klad
           </Typography>
         </DialogTitle>
@@ -159,17 +179,39 @@ function CreateKlad({ open, handleClose }: CreateKladProps) {
               )}
             </Box>
             {/* Input categorie */}
-            <Box>
-              <CustomTextField
-                InputProps={{ disableUnderline: true }}
+            <FormControl
+              sx={{
+                m: 1,
+                borderRadius: 3,
+                border: 'none',
+              }}
+              variant="filled"
+              fullWidth
+            >
+              <InputLabel id="categorie">categorie</InputLabel>
+              <CustomSelectField
                 sx={{
+                  borderRadius: 3,
                   border: errors?.categoryId ? '1px solid #d32f2f' : 'none',
                 }}
-                variant="filled"
-                label="categoryId"
-                fullWidth
+                disableUnderline
+                labelId="categorie"
+                id="categorie-select"
+                label="categorie"
                 {...register('categoryId')}
-              />
+                onChange={handleValueChange('categoryId')}
+                variant="filled"
+                defaultValue=""
+              >
+                {!loading &&
+                  !error &&
+                  categories &&
+                  categories.categories.map((cat: any) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </MenuItem>
+                  ))}
+              </CustomSelectField>
               {errors?.categoryId && (
                 <Typography
                   display={errors.categoryId?.message ? 'block' : 'none'}
@@ -182,33 +224,52 @@ function CreateKlad({ open, handleClose }: CreateKladProps) {
                   {errors.categoryId?.message}
                 </Typography>
               )}
-            </Box>
+            </FormControl>
 
             {/* Input souscategorie */}
-            <Box>
-              <CustomTextField
-                InputProps={{ disableUnderline: true }}
+            <FormControl
+              sx={{
+                m: 1,
+                borderRadius: 3,
+                border: 'none',
+              }}
+              variant="filled"
+              disabled={!category}
+              fullWidth
+            >
+              <InputLabel id="subcategorie">sous categorie</InputLabel>
+              <CustomSelectField
                 sx={{
+                  borderRadius: 3,
                   border: errors?.subCategoryId ? '1px solid #d32f2f' : 'none',
                 }}
-                variant="filled"
-                label="subCategoryId"
-                fullWidth
+                disableUnderline
+                labelId="subcategorie"
+                id="subcategorie-select"
+                label="sous category"
                 {...register('subCategoryId')}
-              />
-              {errors?.subCategoryId && (
+                variant="filled"
+                defaultValue=""
+              >
+                {subCategories.map((subCat: any) => (
+                  <MenuItem key={subCat.id} value={subCat.id}>
+                    {subCat.name}
+                  </MenuItem>
+                ))}
+              </CustomSelectField>
+              {errors?.categoryId && (
                 <Typography
-                  display={errors.subCategoryId?.message ? 'block' : 'none'}
+                  display={errors.categoryId?.message ? 'block' : 'none'}
                   sx={{
                     color: '#d32f2f',
                     marginTop: '0 !important',
                   }}
                   variant="caption"
                 >
-                  {errors.subCategoryId?.message}
+                  {errors.categoryId?.message}
                 </Typography>
               )}
-            </Box>
+            </FormControl>
 
             {/* Input partPrice */}
             <Box>

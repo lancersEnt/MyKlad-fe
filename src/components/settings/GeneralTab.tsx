@@ -30,7 +30,6 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/client';
-import { gql } from 'urql';
 import moment from 'moment';
 import { RootState } from '../../app/store';
 import CustomTextField from '../common/inputs/CustomTextField';
@@ -87,7 +86,7 @@ function GeneralTab(): ReactElement {
     register,
     reset,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { isDirty },
   } = useForm<FormValues>(formOptions);
 
   function removeEmptyFields<T>(obj: T): T {
