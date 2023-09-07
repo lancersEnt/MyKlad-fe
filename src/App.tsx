@@ -20,14 +20,21 @@ const AccountActivation = React.lazy(() => import('./pages/AccountActivation'));
 const NotFound = React.lazy(() => import('./pages/Errors/NotFound'));
 
 const Home = React.lazy(() => import('./pages/Home'));
+const SearchResults = React.lazy(() => import('./pages/SearchResults'));
+const Admin = React.lazy(() => import('./pages/Admin'));
 const Profile = React.lazy(() => import('./pages/Profile'));
+const ExpertHub = React.lazy(() => import('./pages/ExpertHub'));
+const KladReview = React.lazy(() => import('./pages/KladReview'));
 const Page = React.lazy(() => import('./pages/Page'));
 const Kladers = React.lazy(() => import('./pages/Kladers'));
 const Klads = React.lazy(() => import('./pages/Klads'));
+const MyKlads = React.lazy(() => import('./pages/MyKlads'));
+const Klad = React.lazy(() => import('./pages/Klad'));
 const Notifications = React.lazy(() => import('./pages/Notifications'));
 const PublicationView = React.lazy(() => import('./pages/PublicationView'));
 
 const Settings = React.lazy(() => import('./pages/Settings'));
+const DraftKlad = React.lazy(() => import('./pages/DraftKlad'));
 
 const theme = createTheme({
   palette: {
@@ -59,7 +66,8 @@ function App() {
   // Use the `useEffect` hook to dispatch the `login` action when data is available and not loading
   useEffect(() => {
     if (!loading && data && data.me) {
-      dispatch(login(data.me));
+      if (data.me.isActive === true) dispatch(login(data.me));
+      else dispatch(logout());
     }
     if (!loading && !data?.me) {
       dispatch(logout());
@@ -71,6 +79,14 @@ function App() {
       <Routes>
         <Route element={<PrivateRoute component={LoggedInLayout} />}>
           <Route
+            path="/admin"
+            element={
+              <React.Suspense>
+                <Admin />
+              </React.Suspense>
+            }
+          />
+          <Route
             path="/"
             element={
               <React.Suspense>
@@ -79,10 +95,10 @@ function App() {
             }
           />
           <Route
-            path="/search/:query"
+            path="/search"
             element={
               <React.Suspense>
-                <Home />
+                <SearchResults />
               </React.Suspense>
             }
           />
@@ -99,6 +115,30 @@ function App() {
             element={
               <React.Suspense>
                 <Kladers />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/klad/:kladId"
+            element={
+              <React.Suspense>
+                <Klad />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/expert-hub"
+            element={
+              <React.Suspense>
+                <ExpertHub />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/expert-hub/review/:kladId"
+            element={
+              <React.Suspense>
+                <KladReview />
               </React.Suspense>
             }
           />
@@ -127,6 +167,14 @@ function App() {
             }
           />
           <Route
+            path="/myklads"
+            element={
+              <React.Suspense>
+                <MyKlads />
+              </React.Suspense>
+            }
+          />
+          <Route
             path="/publication/:postId"
             element={
               <React.Suspense>
@@ -141,6 +189,14 @@ function App() {
             element={
               <React.Suspense>
                 <Settings />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/draft-klad/:kladId"
+            element={
+              <React.Suspense>
+                <DraftKlad />
               </React.Suspense>
             }
           />

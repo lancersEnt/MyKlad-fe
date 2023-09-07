@@ -94,8 +94,7 @@ function AccountActivation() {
             textAlign="center"
           >
             Vous avez déjà un compte?{' '}
-            <Link
-                    preventScrollReset={false} to="/signin">
+            <Link preventScrollReset={false} to="/signin">
               <Typography
                 component="span"
                 fontSize="0.8rem"

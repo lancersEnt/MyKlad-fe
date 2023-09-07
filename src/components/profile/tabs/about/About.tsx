@@ -17,8 +17,13 @@ import Education from './Education';
 import Experience from './Experience';
 import GeneralInfoForm from './forms/GeneralInfoForm';
 import EducationForm from './forms/EducationForm';
+import User from '../../../../utils/Interfaces/User.interface';
 
-function About(): ReactElement {
+interface AboutProps {
+  user: User;
+}
+
+function About({ user }: AboutProps): ReactElement {
   const [open, setOpen] = React.useState(false);
   const [content, setContent] = React.useState(0);
   const theme = useTheme();
@@ -35,9 +40,9 @@ function About(): ReactElement {
   };
   return (
     <Box>
-      <GeneralInfo editInfo={handleClickOpen} />
-      <Education editEdu={handleClickOpen} />
-      <Experience editExp={handleClickOpen} />
+      <GeneralInfo user={user} editInfo={handleClickOpen} />
+      <Education user={user} editEdu={handleClickOpen} />
+      <Experience user={user} editExp={handleClickOpen} />
 
       <Dialog
         fullScreen={fullScreen}

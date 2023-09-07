@@ -174,7 +174,7 @@ function PageHeader({ page, refetch }: PageHeaderProps) {
               my=".5rem"
             >
               <Stack direction="row-reverse" spacing={1}>
-                <IconButton
+                {/* <IconButton
                   sx={{
                     width: '45px',
                     height: '45px',
@@ -206,7 +206,7 @@ function PageHeader({ page, refetch }: PageHeaderProps) {
                   }}
                 >
                   <MailIcon />
-                </IconButton>
+                </IconButton> */}
                 <Button
                   onClick={handleFollowButton}
                   variant={following ? 'outlined' : 'contained'}
@@ -226,7 +226,7 @@ function PageHeader({ page, refetch }: PageHeaderProps) {
             >
               <Stack direction="row" spacing={{ xs: 2, xl: 12 }}>
                 <Typography fontSize={{ xs: 13, xl: 14 }} gutterBottom>
-                  5 Projets
+                  {page.klads.length} Projets
                 </Typography>
                 <Typography
                   onClick={() => {

@@ -81,3 +81,12 @@ export const POST_UNLIKE_SUBSCRIPTION = gql`
     }
   }
 `;
+
+export const MESSAGE_CREATED = gql`
+  subscription Subscription($kladId: String!) {
+    messageCreated(kladId: $kladId) {
+      id
+      kladId
+    }
+  }
+`;

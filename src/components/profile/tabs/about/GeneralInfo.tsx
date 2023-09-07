@@ -16,8 +16,18 @@ import PhoneIcon from '@mui/icons-material/PhoneEnabledOutlined';
 import PublicIcon from '@mui/icons-material/PublicRounded';
 import OnlyMeIcon from '@mui/icons-material/LockOutlined';
 import FriendsIcon from '@mui/icons-material/PeopleAltOutlined';
+import moment from 'moment';
+import 'moment/locale/fr';
+import User from '../../../../utils/Interfaces/User.interface';
 
-function GeneralInfo({ editInfo }: any) {
+moment.locale('fr');
+
+interface GeneralInfoProps {
+  editInfo: any;
+  user: User;
+}
+
+function GeneralInfo({ editInfo, user }: GeneralInfoProps) {
   return (
     <Box
       sx={{
@@ -39,15 +49,6 @@ function GeneralInfo({ editInfo }: any) {
         >
           Informations générale
         </Typography>
-        <Button
-          color="secondary"
-          size="large"
-          sx={{ borderRadius: 25, fontSize: 10, backgroundColor: '#F0F0F0' }}
-          onClick={() => editInfo(1)}
-        >
-          <EditIcon sx={{ fontSize: 18, mr: 0.5 }} />
-          Modifier
-        </Button>
       </Stack>
       <Grid container spacing={2} px={1}>
         {/* Gendre */}
@@ -70,7 +71,7 @@ function GeneralInfo({ editInfo }: any) {
                     noWrap
                     maxWidth={{ xs: 170, sm: 350, md: 180, xl: 280 }}
                   >
-                    Masculin
+                    {user.sex === 'male' ? 'Masculin' : 'Feminin'}
                   </Typography>
                 </Stack>
               </Stack>
@@ -106,12 +107,12 @@ function GeneralInfo({ editInfo }: any) {
                     noWrap
                     maxWidth={{ xs: 170, sm: 350, md: 180, xl: 280 }}
                   >
-                    saafghassen@gmail.com
+                    {user.email}
                   </Typography>
                 </Stack>
               </Stack>
               <IconButton disabled>
-                <OnlyMeIcon
+                <PublicIcon
                   sx={{
                     color: 'grey',
                     my: 'auto',
@@ -142,7 +143,11 @@ function GeneralInfo({ editInfo }: any) {
                     noWrap
                     maxWidth={{ xs: 170, sm: 350, md: 180, xl: 280 }}
                   >
-                    01 Janvier 1995
+                    {new Date(user.dateOfBirth).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
                   </Typography>
                 </Stack>
               </Stack>
@@ -178,12 +183,12 @@ function GeneralInfo({ editInfo }: any) {
                     noWrap
                     maxWidth={{ xs: 170, sm: 350, md: 180, xl: 280 }}
                   >
-                    18 Rue Nessrines, hammamet 8050 zafazefazefa azeffae
+                    {user.address}
                   </Typography>
                 </Stack>
               </Stack>
               <IconButton disabled>
-                <FriendsIcon
+                <PublicIcon
                   sx={{
                     color: 'grey',
                     my: 'auto',
@@ -214,12 +219,12 @@ function GeneralInfo({ editInfo }: any) {
                     noWrap
                     maxWidth={{ xs: 170, sm: 350, md: 180, xl: 280 }}
                   >
-                    (+216) 21 509 309
+                    {user.phone}
                   </Typography>
                 </Stack>
               </Stack>
               <IconButton disabled>
-                <OnlyMeIcon
+                <PublicIcon
                   sx={{
                     color: 'grey',
                     my: 'auto',

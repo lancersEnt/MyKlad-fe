@@ -85,26 +85,16 @@ function ProfileTabs({ user }: ProfileTabsProps) {
             sx={{ marginRight: '1rem' }}
             {...a11yProps(2)}
           />
-          <Tab
-            icon={<PagesIcon />}
-            iconPosition="start"
-            label="Pages"
-            sx={{ marginRight: '1rem' }}
-            {...a11yProps(3)}
-          />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
         <Publications posts={user.posts} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <About />
+        <About user={user} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <Investments />
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        Item Four
+        <Investments investments={user.investments} />
       </TabPanel>
     </Box>
   );

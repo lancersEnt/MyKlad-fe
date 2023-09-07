@@ -32,7 +32,7 @@ import CustomTextField from '../../common/inputs/CustomTextField';
 import { RootState } from '../../../app/store';
 import { CREATE_POST } from '../../../utils/GraphQL/Mutations';
 
-const uploader = Uploader({ apiKey: 'public_kW15bZn8U7vFK5hjt2GgJgDvGkLy' }); // Your real API key.
+const uploader = Uploader({ apiKey: 'public_W142iCzFqiJEacLzJCW4KQsGvEFm' }); // Your real API key.
 
 function PostInput(): ReactElement {
   const [type, setType] = useState('text');

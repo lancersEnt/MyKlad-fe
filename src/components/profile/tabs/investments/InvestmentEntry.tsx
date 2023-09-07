@@ -11,9 +11,15 @@ import {
 } from '@mui/material';
 
 import PublicIcon from '@mui/icons-material/PublicRounded';
+import { Link } from 'react-router-dom';
 import CircularProgressWithLabel from '../../../common/progressBar/CircularProgressWithLabel';
+import { Investment } from '../../../../utils/Interfaces/Investment.interface';
 
-function InvestmentEntry(): ReactElement {
+interface InvestmentProps {
+  investment: Investment;
+}
+
+function InvestmentEntry({ investment }: InvestmentProps): ReactElement {
   return (
     <Grid item xs={12}>
       <Box
@@ -26,21 +32,38 @@ function InvestmentEntry(): ReactElement {
         <Stack direction="row" justifyContent="space-between">
           <Stack direction="row" spacing={2}>
             <Avatar
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSXLN7hUoZHWo_4oshb2Aui9HJ5oTbHkxSSLiYbMfYkg&s"
+              src={investment.klad.pictureUrl}
               alt="institute"
               sx={{ my: 'auto', width: '60px', height: '60px' }}
             />
             <Stack display="flex" spacing={3}>
               <Box my="auto">
                 <Typography sx={{ height: '100%' }}>
-                  K2C Consulting
+                  <Link
+                    style={{
+                      textDecoration: 'none',
+                      textTransform: 'none',
+                      color: 'black',
+                    }}
+                    to={`/klad/${investment.klad.id}`}
+                  >
+                    {investment.klad.name}
+                  </Link>
                   <Typography
                     variant="caption"
                     display="block"
                     style={{ color: 'grey' }}
                   >
-                    0113Z - Culture de légumes, de melon, de racines et
-                    tubercules
+                    <Link
+                      style={{
+                        textDecoration: 'none',
+                        textTransform: 'none',
+                        color: 'grey',
+                      }}
+                      to={`/page/${investment.klad.owner.username}`}
+                    >
+                      {investment.klad.owner.firstname}
+                    </Link>
                   </Typography>
                 </Typography>
               </Box>
@@ -66,7 +89,16 @@ function InvestmentEntry(): ReactElement {
         </Stack>
         <Stack alignItems="center" mt={2}>
           <Box>
-            <CircularProgressWithLabel value={82} size="8rem" thickness={4} />
+            <CircularProgressWithLabel
+              variant="determinate"
+              value={
+                (investment.klad.budgetCollected /
+                  investment.klad.budgetNeeded) *
+                100
+              }
+              size="8rem"
+              thickness={4}
+            />
           </Box>
         </Stack>
       </Box>

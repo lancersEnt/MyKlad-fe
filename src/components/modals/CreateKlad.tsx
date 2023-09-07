@@ -91,6 +91,9 @@ function CreateKlad({ open, handleClose }: CreateKladProps) {
   const onSubmit = handleSubmit(async (formValues) => {
     await addKlad({
       variables: { createKladInput: formValues },
+      onCompleted(data) {
+        window.location.replace(`/draft-klad/${data.createKlad.id}`);
+      },
     });
   });
   return (

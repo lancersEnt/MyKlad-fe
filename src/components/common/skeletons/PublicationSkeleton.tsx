@@ -168,7 +168,7 @@ function PublicationSkeleton() {
                   </Typography>
                 </Box>
               </Stack>
-              <Stack direction="row" spacing={2}>
+              {/* <Stack direction="row" spacing={2}>
                 <Box display="flex">
                   <SaveIcon
                     sx={{ color: 'grey', my: 'auto', cursor: 'pointer' }}
@@ -183,7 +183,7 @@ function PublicationSkeleton() {
                     Enregistrer
                   </Typography>
                 </Box>
-              </Stack>
+              </Stack> */}
             </Stack>
           </Box>
         </Box>

@@ -5,8 +5,8 @@ import React from 'react';
 import { Box, Grid, Tab, Tabs, Typography } from '@mui/material';
 
 import PublicationsIcon from '@mui/icons-material/ArticleOutlined';
-import AboutIcon from '@mui/icons-material/InfoOutlined';
 import StarIcon from '@mui/icons-material/StarBorderOutlined';
+import AboutIcon from '@mui/icons-material/InfoOutlined';
 import DocumentIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import PictureIcon from '@mui/icons-material/PhotoAlbumOutlined';
 import VideoIcon from '@mui/icons-material/VideocamOutlined';
@@ -141,7 +141,7 @@ function PageTabs({ page }: PageTabsProps) {
         <About />
       </TabPanel>
       <TabPanel value={value} index={2} page={page}>
-        <Klads />
+        <Klads klads={page.klads} />
       </TabPanel>
       <TabPanel value={value} index={3} page={page}>
         Item 3: Documents

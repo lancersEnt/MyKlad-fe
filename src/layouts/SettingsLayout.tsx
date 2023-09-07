@@ -14,7 +14,13 @@ function LoggedInLayout() {
         <Box>
           <DrawerHeader />
         </Box>
-        <Container sx={{ px: 0 }}>{outlet}</Container>
+        <Container
+          sx={{
+            px: 0,
+          }}
+        >
+          {outlet}
+        </Container>
       </Box>
     </Box>
   );

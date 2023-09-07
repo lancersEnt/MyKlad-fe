@@ -3,8 +3,13 @@ import { ReactElement } from 'react';
 import { Box, Grid, Stack, Typography } from '@mui/material';
 
 import InvestmentEntry from './InvestmentEntry';
+import { Investment } from '../../../../utils/Interfaces/Investment.interface';
 
-function Investments(): ReactElement {
+interface InvestmentsProps {
+  investments: Investment[];
+}
+
+function Investments({ investments }: InvestmentsProps): ReactElement {
   return (
     <Box>
       <Box
@@ -28,8 +33,9 @@ function Investments(): ReactElement {
           </Typography>
         </Stack>
         <Grid container spacing={2} px={1}>
-          <InvestmentEntry />
-          <InvestmentEntry />
+          {investments.map((investment) => (
+            <InvestmentEntry investment={investment} key={investment.id} />
+          ))}
         </Grid>
       </Box>
     </Box>

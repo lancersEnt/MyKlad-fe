@@ -13,6 +13,8 @@ interface PublicationProps {
 function Publications({ posts }: PublicationProps) {
   const user = useSelector((state: RootState) => state.auth.user);
   const { username } = useParams();
+  console.log(posts);
+
   return (
     <Box>
       {user.username === username && <PostInput />}

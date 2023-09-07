@@ -233,3 +233,102 @@ export const CREATE_KLAD = gql`
     }
   }
 `;
+
+export const UPDATE_KLAD = gql`
+  mutation Mutation(
+    $updateKladId: String!
+    $updateKladInput: UpdateKladInput!
+  ) {
+    updateKlad(id: $updateKladId, updateKladInput: $updateKladInput) {
+      id
+    }
+  }
+`;
+
+export const CREATE_MILESTONE = gql`
+  mutation Mutation($createManyMilestonesInput: [CreateMilestoneInput]!) {
+    createMilestones(createManyMilestonesInput: $createManyMilestonesInput) {
+      milestonesCreated
+    }
+  }
+`;
+
+export const DELETE_MILESTONE = gql`
+  mutation RemoveMilestone($removeMilestoneId: String!) {
+    removeMilestone(id: $removeMilestoneId) {
+      id
+    }
+  }
+`;
+
+export const UPDATE_MILESTONE = gql`
+  mutation Mutation(
+    $updateMilestoneInput: UpdateMilestoneInput!
+    $updateMilestoneId: String!
+  ) {
+    updateMilestone(
+      updateMilestoneInput: $updateMilestoneInput
+      id: $updateMilestoneId
+    ) {
+      id
+    }
+  }
+`;
+
+export const CREATE_MESSAGE = gql`
+  mutation Mutation($createMessageInput: CreateMessageInput!) {
+    createMessage(createMessageInput: $createMessageInput) {
+      id
+    }
+  }
+`;
+
+export const DELETE_KLAD_MESSAGES = gql`
+  mutation Mutation($kladId: String) {
+    deleteKladMessages(kladId: $kladId)
+  }
+`;
+
+export const INVEST = gql`
+  mutation Mutation($createInvestmentInput: CreateInvestmentInput) {
+    createInvestment(createInvestmentInput: $createInvestmentInput) {
+      id
+    }
+  }
+`;
+
+export const UPDATE_PASSWORD = gql`
+  mutation Mutation($updatePasswordInput: UpdatePasswordInput) {
+    updatePassword(updatePasswordInput: $updatePasswordInput)
+  }
+`;
+
+export const UPDATE_BALANCE = gql`
+  mutation UpdateBalance($amount: Int) {
+    updateBalance(amount: $amount)
+  }
+`;
+
+export const BLOCK_UNBLOCK = gql`
+  mutation Mutation($userId: String) {
+    blockUnblockUser(userId: $userId) {
+      id
+    }
+  }
+`;
+
+export const ADD_EXPERT = gql`
+  mutation Mutation($userId: String) {
+    addExpertPermission(userId: $userId) {
+      id
+    }
+  }
+`;
+
+export const REMOVE_EXPERT = gql`
+  mutation Mutation($userId: String) {
+    removeExpertPermission(userId: $userId) {
+      id
+    }
+  }
+`;

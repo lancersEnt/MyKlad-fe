@@ -11,15 +11,15 @@ import {
 } from '@mui/material';
 
 // icons
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from '@mui/icons-material/HomeOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
-import Diversity2Icon from '@mui/icons-material/Diversity2';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import GroupsIcon from '@mui/icons-material/Groups';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenterOutlined';
+import VerifiedIcon from '@mui/icons-material/VerifiedOutlined';
+import BookmarkIcon from '@mui/icons-material/BookmarksOutlined';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { DashboardOutlined } from '@mui/icons-material';
+import { RootState } from '../../../app/store';
 
 export const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -38,6 +38,8 @@ export default function Sidebar() {
     return false;
   };
 
+  const user = useSelector((state: RootState) => state.auth.user);
+
   return (
     <Drawer
       PaperProps={{
@@ -46,7 +48,6 @@ export default function Sidebar() {
         },
       }}
       variant="permanent"
-      open={false}
     >
       <Box
         sx={{
@@ -60,6 +61,43 @@ export default function Sidebar() {
       >
         <DrawerHeader />
         <List sx={{ my: 'auto' }}>
+          {user.permissions.includes('admin') && (
+            <ListItem
+              key={0}
+              sx={{
+                borderRight: isActive('/admin') ? '3px solid #305CE9' : 'none',
+                display: 'block',
+                mb: '1.5rem',
+              }}
+            >
+              <ListItemButton
+                sx={{
+                  borderRadius: '50%',
+                  backgroundColor: isActive('/admin') ? '#E4EBF7' : 'white',
+                  height: 30,
+                  width: 30,
+                  justifyContent: 'center',
+                  px: 3,
+                  py: 3,
+                }}
+                onClick={() =>
+                  navigate('/admin', { preventScrollReset: false })
+                }
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <DashboardOutlined
+                    color={isActive('/admin') ? 'primary' : 'secondary'}
+                  />
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          )}
           <ListItem
             key={1}
             sx={{
@@ -159,53 +197,48 @@ export default function Sidebar() {
               </ListItemIcon>
             </ListItemButton>
           </ListItem>
-          {/* <ListItem key={4} sx={{ display: 'block', mb: '1.5rem' }}>
-            <ListItemButton
+          {user.permissions.includes('expert') && (
+            <ListItem
+              key={4}
               sx={{
-                borderRadius: '50%',
-                backgroundColor: 'white',
-                height: 30,
-                width: 30,
-                justifyContent: 'center',
-                px: 3,
-                py: 3,
+                borderRight: isActive('/expert-hub')
+                  ? '3px solid #305CE9'
+                  : 'none',
+                display: 'block',
+                mb: '1.5rem',
               }}
             >
-              <ListItemIcon
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: 'auto',
+                  borderRadius: '50%',
+                  backgroundColor: isActive('/expert-hub')
+                    ? '#E4EBF7'
+                    : 'white',
+                  height: 30,
+                  width: 30,
                   justifyContent: 'center',
+                  px: 3,
+                  py: 3,
                 }}
+                onClick={() =>
+                  navigate('/expert-hub', { preventScrollReset: false })
+                }
               >
-                <Diversity2Icon color="secondary" />
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem> 
-          <ListItem key={5} sx={{ display: 'block', mb: '1.5rem' }}>
-            <ListItemButton
-              sx={{
-                borderRadius: '50%',
-                backgroundColor: 'white',
-                height: 30,
-                width: 30,
-                justifyContent: 'center',
-                px: 3,
-                py: 3,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                <VerifiedIcon color="secondary" />
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-          <ListItem key={6} sx={{ display: 'block', mb: '1.5rem' }}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <VerifiedIcon
+                    color={isActive('/expert-hub') ? 'primary' : 'secondary'}
+                  />
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          )}
+          {/* <ListItem key={5} sx={{ display: 'block', mb: '1.5rem' }}>
             <ListItemButton
               sx={{
                 borderRadius: '50%',
@@ -225,52 +258,6 @@ export default function Sidebar() {
                 }}
               >
                 <BookmarkIcon color="secondary" />
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-          <ListItem key={7} sx={{ display: 'block', mb: '1.5rem' }}>
-            <ListItemButton
-              sx={{
-                borderRadius: '50%',
-                backgroundColor: 'white',
-                height: 30,
-                width: 30,
-                justifyContent: 'center',
-                px: 3,
-                py: 3,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                <GroupsIcon color="secondary" />
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-          <ListItem key={8} sx={{ display: 'block', mb: '1.5rem' }}>
-            <ListItemButton
-              sx={{
-                borderRadius: '50%',
-                backgroundColor: 'white',
-                height: 30,
-                width: 30,
-                justifyContent: 'center',
-                px: 3,
-                py: 3,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                <CalendarMonthIcon color="secondary" />
               </ListItemIcon>
             </ListItemButton>
           </ListItem> */}

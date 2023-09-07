@@ -15,7 +15,7 @@ import {
 import { ReactNode, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { RootState } from '../app/store';
 import User from '../utils/Interfaces/User.interface';
 import { DISCOVER_KLADERS } from '../utils/GraphQL/Queries';
@@ -117,7 +117,7 @@ function Kladers() {
                           textTransform="capitalize"
                         >
                           <Link
-                    preventScrollReset={false}
+                            preventScrollReset={false}
                             style={{ textDecoration: 'none', color: 'black' }}
                             to={
                               follower.permissions.includes('user')
@@ -150,7 +150,7 @@ function Kladers() {
                           textTransform="capitalize"
                         >
                           <Link
-                    preventScrollReset={false}
+                            preventScrollReset={false}
                             style={{ textDecoration: 'none', color: 'black' }}
                             to={
                               follower.permissions.includes('user')
@@ -185,7 +185,7 @@ function Kladers() {
                             textTransform="capitalize"
                           >
                             <Link
-                    preventScrollReset={false}
+                              preventScrollReset={false}
                               style={{ textDecoration: 'none', color: 'black' }}
                               to={
                                 follower.permissions.includes('user')

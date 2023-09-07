@@ -35,7 +35,7 @@ import { RootState } from '../../app/store';
 import CustomTextField from '../common/inputs/CustomTextField';
 import { UPDATE_USER } from '../../utils/GraphQL/Mutations';
 
-const uploader = Uploader({ apiKey: 'public_kW15bZn8U7vFK5hjt2GgJgDvGkLy' }); // Your real API key.
+const uploader = Uploader({ apiKey: 'public_W142iCzFqiJEacLzJCW4KQsGvEFm' }); // Your real API key.
 
 type FormValues = {
   firstname: string;

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { MouseEvent, useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
@@ -297,7 +298,8 @@ export default function Navbar() {
                   {/* <ExpandMoreIcon /> */}
                 </Typography>
                 <Chip
-                  label="123 456$"
+                  sx={{ width: '100%' }}
+                  label={`${user.balance} $`}
                   size="small"
                   variant="outlined"
                   color="primary"
@@ -329,18 +331,20 @@ export default function Navbar() {
                       <NotificationsIcon />
                     </Badge>
                   </IconButton>
-                  <IconButton
-                    sx={{
-                      width: '45px',
-                      height: '45px',
-                      backgroundColor: '#F5F6F9',
-                      p: 1,
-                      borderRadius: '5rem',
-                    }}
-                    onClick={() => setSearchInput(true)}
-                  >
-                    <SearchIcon />
-                  </IconButton>
+                  <label htmlFor="searchInput">
+                    <IconButton
+                      sx={{
+                        width: '45px',
+                        height: '45px',
+                        backgroundColor: '#F5F6F9',
+                        p: 1,
+                        borderRadius: '5rem',
+                      }}
+                      onClick={() => setSearchInput(true)}
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </label>
                 </>
               )}
               {searchInput && (
@@ -348,14 +352,16 @@ export default function Navbar() {
                   action=""
                   onSubmit={(e) => {
                     e.preventDefault();
-                    navigate(`/search/${searchQuery}`, {
+                    navigate(`/search?q=${searchQuery}`, {
                       preventScrollReset: false,
                     });
                   }}
                 >
                   <CustomTextField
-                    onBlur={handleBlur}
+                    // onBlur={handleBlur}
                     placeholder="Search"
+                    id="searchInput"
+                    name="searchInput"
                     variant="filled"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -476,34 +482,6 @@ export default function Navbar() {
                         </MenuItem>
                       </Stack>
                     </Box>
-                    {!user.permissions.includes('expert') &&
-                      !user.permissions.includes('admin') &&
-                      user.permissions.includes('user') && (
-                        <>
-                          <Divider sx={{ my: 1 }} />
-                          <Box
-                            sx={{
-                              py: 1,
-                              borderRadius: 3,
-                              backgroundColor: '#F0F0F0',
-                            }}
-                          >
-                            <Stack spacing={2}>
-                              <MenuItem
-                                sx={{ borderRadius: 2, width: '100%' }}
-                                onClick={() => handleCloseUserMenu('profile')}
-                              >
-                                <Stack direction="row" spacing={1}>
-                                  <SupervisorAccountOutlined />
-                                  <Typography display={{ xs: 'none' }}>
-                                    Devenir expert
-                                  </Typography>
-                                </Stack>
-                              </MenuItem>
-                            </Stack>
-                          </Box>
-                        </>
-                      )}
                   </Grid>
                   <Grid item xs={8.5} sm={8.5} md={8}>
                     <Box
@@ -606,6 +584,94 @@ export default function Navbar() {
                         </Stack>
                       ))}
                     </Box>
+
+                    {user.klads.length > 0 && (
+                      <Box px={2}>
+                        <Divider sx={{ my: 1 }} />
+                        <Stack direction="row" justifyContent="space-between">
+                          <Typography fontWeight={500}>
+                            Dernier projets
+                          </Typography>
+                          <Typography color="primary" fontSize={12}>
+                            voir tous
+                          </Typography>
+                        </Stack>
+                      </Box>
+                    )}
+                    {user.klads.slice(0, 4).map((klad) => (
+                      <Stack
+                        key={klad.id}
+                        direction="row"
+                        spacing={1}
+                        sx={{ justifyContent: 'space-between', px: 1 }}
+                      >
+                        <Stack
+                          direction="row"
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          <IconButton sx={{ my: 'auto' }}>
+                            <Avatar
+                              alt="Avatar"
+                              sx={{ width: 30, height: 30 }}
+                              src=""
+                            />
+                          </IconButton>
+                          <Stack direction="row" spacing={2}>
+                            <Typography
+                              fontWeight={500}
+                              fontSize={14}
+                              textTransform="capitalize"
+                            >
+                              <Link
+                                preventScrollReset
+                                style={{
+                                  textDecoration: 'none',
+                                  color: 'black',
+                                }}
+                                to={
+                                  klad.isDraft
+                                    ? `/draft-klad/${klad.id}`
+                                    : `/klad/${klad.id}`
+                                }
+                              >{`${klad.name}`}</Link>
+                            </Typography>
+                            {klad.isDraft && (
+                              <Box display="flex" alignContent="center">
+                                <Typography
+                                  fontSize={10}
+                                  fontWeight={500}
+                                  color="grey"
+                                  sx={{
+                                    border: '2px solid grey',
+                                    borderRadius: 5,
+                                    px: 1,
+                                  }}
+                                >
+                                  draft
+                                </Typography>
+                              </Box>
+                            )}
+                            {klad.inReview && (
+                              <Box display="flex" alignContent="center">
+                                <Typography
+                                  fontSize={10}
+                                  fontWeight={500}
+                                  color="purple"
+                                  sx={{
+                                    border: '2px solid purple',
+                                    borderRadius: 5,
+                                    px: 1,
+                                  }}
+                                >
+                                  review
+                                </Typography>
+                              </Box>
+                            )}
+                          </Stack>
+                        </Stack>
+                      </Stack>
+                    ))}
+
                     {user.permissions.includes('page') && (
                       <>
                         <Divider sx={{ my: 1 }} />
@@ -635,6 +701,21 @@ export default function Navbar() {
                           <Typography textAlign="center">Parametres</Typography>
                         </Stack>
                       </MenuItem>
+                      {!user.permissions.includes('expert') &&
+                        !user.permissions.includes('admin') &&
+                        user.permissions.includes('user') && (
+                          <MenuItem
+                            sx={{ borderRadius: 2 }}
+                            onClick={() => handleCloseUserMenu('settings')}
+                          >
+                            <Stack spacing={1} direction="row">
+                              <SupervisorAccountOutlined />
+                              <Typography textAlign="center">
+                                Devenir Expert
+                              </Typography>
+                            </Stack>
+                          </MenuItem>
+                        )}
                       <MenuItem
                         sx={{ borderRadius: 2 }}
                         onClick={() => signout()}

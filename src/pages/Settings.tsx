@@ -11,6 +11,7 @@ import LanguageIcon from '@mui/icons-material/TranslateOutlined';
 import PaymentsIcon from '@mui/icons-material/PaymentsOutlined';
 import GeneralTab from '../components/settings/GeneralTab';
 import SecurityTab from '../components/settings/SecurityTab';
+import MyKladPay from '../components/settings/MyKladPay';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -140,96 +141,6 @@ function Settings(): ReactElement {
           }}
           label={
             <Box>
-              <ConfidentialityIcon
-                sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}
-              />
-              <Grid
-                container
-                spacing={2}
-                display={{ xs: 'none', sm: 'none', md: 'flex' }}
-              >
-                <Grid item>
-                  <ConfidentialityIcon />
-                </Grid>
-                <Grid item>
-                  <Typography fontSize={12} textTransform="capitalize">
-                    Confidentialité
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          }
-          wrapped
-          {...a11yProps(2)}
-        />
-        <Tab
-          sx={{
-            py: 4,
-            display: 'block',
-            alignItems: { xs: 'center', sm: 'center', md: 'start' },
-          }}
-          label={
-            <Box>
-              <BlockIcon
-                sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}
-              />
-              <Grid
-                container
-                spacing={2}
-                display={{ xs: 'none', sm: 'none', md: 'flex' }}
-              >
-                <Grid item>
-                  <BlockIcon />
-                </Grid>
-                <Grid item>
-                  <Typography fontSize={12} textTransform="capitalize">
-                    Blocage
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          }
-          wrapped
-          {...a11yProps(3)}
-        />
-        <Tab
-          sx={{
-            py: 4,
-            display: 'block',
-            alignItems: { xs: 'center', sm: 'center', md: 'start' },
-          }}
-          label={
-            <Box>
-              <LanguageIcon
-                sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}
-              />
-              <Grid
-                container
-                spacing={2}
-                display={{ xs: 'none', sm: 'none', md: 'flex' }}
-              >
-                <Grid item>
-                  <LanguageIcon />
-                </Grid>
-                <Grid item>
-                  <Typography fontSize={12} textTransform="capitalize">
-                    Langue et region
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          }
-          wrapped
-          {...a11yProps(4)}
-        />
-        <Tab
-          sx={{
-            py: 4,
-            display: 'block',
-            alignItems: { xs: 'center', sm: 'center', md: 'start' },
-          }}
-          label={
-            <Box>
               <PaymentsIcon
                 sx={{ display: { xs: 'flex', sm: 'flex', md: 'none' } }}
               />
@@ -250,7 +161,7 @@ function Settings(): ReactElement {
             </Box>
           }
           wrapped
-          {...a11yProps(5)}
+          {...a11yProps(2)}
         />
       </Tabs>
       <TabPanel value={value} index={0}>
@@ -260,16 +171,7 @@ function Settings(): ReactElement {
         <SecurityTab />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Confidentialité
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        Blocage
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        Langue et région
-      </TabPanel>
-      <TabPanel value={value} index={5}>
-        MyKlad Pay
+        <MyKladPay />
       </TabPanel>
     </Box>
   );

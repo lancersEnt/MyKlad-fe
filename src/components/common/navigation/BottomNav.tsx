@@ -13,8 +13,12 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import GroupsIcon from '@mui/icons-material/Groups';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { VerifiedOutlined } from '@mui/icons-material';
+import { RootState } from '../../../app/store';
 
 export default function BottomNav() {
+  const user = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
   const [value, setValue] = useState('home');
 
@@ -50,13 +54,23 @@ export default function BottomNav() {
       <BottomNavigationAction
         label="Klads"
         value="invests"
+        onClick={() => navigate('/klads', { preventScrollReset: false })}
         icon={<BusinessCenterIcon />}
       />
-      <BottomNavigationAction
+      {user.permissions.includes('expert') && (
+        <BottomNavigationAction
+          label="Klads"
+          value="invests"
+          onClick={() => navigate('/expert-hub', { preventScrollReset: false })}
+          icon={<VerifiedOutlined />}
+        />
+      )}
+
+      {/* <BottomNavigationAction
         label="favoris"
         value="Saved"
         icon={<BookmarkIcon />}
-      />
+      /> */}
       {/* <BottomNavigationAction
         label="Connections"
         value="connections"

@@ -40,6 +40,8 @@ function Profile() {
       refetch(); // Refetch the posts after a new post is created
     }
   }, [postSubData, likeSubData, unlikeSubData, refetch]);
+  console.log(user);
+
   return (
     <Box mb="5rem">
       {loading && 'loading ... '}

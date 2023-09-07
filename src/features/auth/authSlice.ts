@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Cookies from 'universal-cookie';
+import { Klad } from '../../utils/Interfaces/Klad.interface';
 
 const cookies = new Cookies();
 
@@ -10,6 +11,7 @@ interface User {
   lastname: string;
   email: string;
   username: string;
+  balance: number;
   dateOfBirth: string;
   city: string;
   phone: string;
@@ -20,6 +22,7 @@ interface User {
   followers: User[];
   following: User[];
   pages: User[];
+  klads: Klad[];
 }
 
 interface AuthState {
@@ -35,6 +38,7 @@ const initialState: AuthState = {
     lastname: '',
     email: '',
     username: '',
+    balance: 0,
     dateOfBirth: '',
     city: '',
     phone: '',
@@ -45,6 +49,7 @@ const initialState: AuthState = {
     followers: [],
     following: [],
     pages: [],
+    klads: [],
   },
 };
 
@@ -60,6 +65,10 @@ const authSlice = createSlice({
     updateFollowing: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
     },
+    updateBalance: (state, action: PayloadAction<number>) => {
+      // Update the user's balance
+      state.user.balance = action.payload;
+    },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = initialState.user;
@@ -68,5 +77,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { login, logout, updateFollowing } = authSlice.actions;
+export const { login, logout, updateFollowing, updateBalance } =
+  authSlice.actions;
 export default authSlice.reducer;
